@@ -1,0 +1,52 @@
+name: CI
+
+# Netlify builds and deploys. This workflow only gates pull requests, so the
+# organization's allowed-actions policy never sits in the deploy path.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  site:
+    name: site — typecheck · format · build
+    runs-on: ubuntu-latest
+    env:
+      # Corepack >= 0.20 prompts before downloading a packageManager version
+      # with no integrity hash. In a non-TTY runner that prompt is a hard fail.
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+
+      # pnpm/action-setup is a third-party action and is blocked by the
+      # organization's allowed-actions policy. Corepack reads
+      # package.json#packageManager and pins pnpm 10.34.3 with no action at all.
+      - run: corepack enable
+
+      # NOT `cache: 'pnpm'` on setup-node: that shells out to `pnpm store path`
+      # during setup, before pnpm exists, and the job dies with
+      # "Unable to locate executable file: pnpm". actions/cache is
+      # GitHub-created, so it is inside the org policy.
+      - id: store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
+      - run: pnpm run format:check
+      - run: pnpm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7

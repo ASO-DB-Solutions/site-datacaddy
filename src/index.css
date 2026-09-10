@@ -1,0 +1,16 @@
+@import "@fontsource-variable/archivo/wdth.css";
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
