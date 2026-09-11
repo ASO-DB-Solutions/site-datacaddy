@@ -1,0 +1,34 @@
+Copyright (c) 2026 ASO DB Solutions. All rights reserved.
+
+This repository holds the source of the DataCaddy institutional website. It is
+public so the work can be read, audited and linked to — not so it can be reused.
+
+No licence is granted to copy, modify, distribute or create derivative works
+from this repository's content, including its copy, imagery, brand marks and
+layout. Publishing source code does not place it in the public domain, and the
+absence of a permissive licence is deliberate rather than an oversight: the
+material here is a company's brand, and a permissive licence would let anyone
+republish it as their own.
+
+Reading the code, linking to it, quoting it in discussion, and filing an issue
+are all welcome and need no permission.
+
+THIRD-PARTY MATERIAL
+
+Some assets in this repository carry their own licences, which govern those
+assets and are not affected by the notice above. Each is recorded with its
+origin in docs/assets.md:
+
+  - Archivo (typeface), SIL Open Font License 1.1
+    Copyright 2020 The Archivo Project Authors
+    https://github.com/Omnibus-Type/Archivo
+    Full text: node_modules/@fontsource-variable/archivo/LICENSE
+
+  - Photograph by Brandon Williams, Unsplash License
+    https://unsplash.com/photos/Nt3vkTSlVHk
+
+Dependencies declared in package.json carry their own licences and are not
+redistributed by this repository.
+
+For permission to use anything here beyond the above, contact
+info@datacaddy.co.

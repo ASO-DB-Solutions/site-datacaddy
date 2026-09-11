@@ -10,10 +10,15 @@ Single-context layout: `CONTEXT.md` + `docs/adr/` at the repo root. ADRs are app
 numbered sequentially, never renumbered; corrections go in a dated `## Addendum`, not by editing
 the reasoning. See `docs/adr/README.md`.
 
-**No `docs/devlog/` here, deliberately.** The sibling generates a dated report per day because a
-non-technical stakeholder tracks a months-long build. This repository is a one-page site; a daily
-report would be ceremony nobody reads. Stakeholder-facing updates ship as Artifacts instead — see
-Deliverables below.
+**Devlog (adopted 2026-09-11, reversing an earlier call).** One dated report per calendar day
+under `docs/devlog/`, generated from git and GitHub rather than from memory, aimed at a
+non-technical stakeholder. See `docs/devlog/README.md`.
+
+This section previously argued the opposite — that a one-page site did not justify the ceremony.
+Two days in, the project had already accumulated decisions a stakeholder would want to follow, and
+none of them were legible without reading commit messages. Reversed on the project owner's call;
+recorded rather than silently edited, because the earlier reasoning was wrong in a way worth
+remembering.
 
 ### Branching (adopted 2026-09-11)
 
