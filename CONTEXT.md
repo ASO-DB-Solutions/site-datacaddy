@@ -75,12 +75,20 @@ _Avoid_: Figma (the design tool generally), the export
 
 ### Ownership
 
+**ASO Tech Global LLC**:
+The entity that owns this web project, and the one named in the site's footer. DataCaddy targets
+the United States market, which is why the US entity owns it rather than ASO DB Solutions. Written
+without a comma or a period before `LLC` — see the note below.
+_Avoid_: ASO TECH GLOBAL. LLC (the period is not a recognised form), Aso Tech (the full name is
+the legal one)
+
 **ASO DB Solutions**:
-The company that owns this repository and the `ASO-DB-Solutions` GitHub organization. The
-sibling repository `integration-bot` belongs to the same organization and supplies the
-conventions this one follows. DataCaddy is its product; the company name does not appear as the
-site's brand.
-_Avoid_: ASODB (that prefix belongs to the Teams bot, not to this product)
+The Brazilian company that owns the `ASO-DB-Solutions` GitHub organization, which hosts this
+repository, and the sibling repository `integration-bot` that supplies the conventions this one
+follows. Distinct from the owner of the web project above — the organization hosts the code, the
+LLC owns the site.
+_Avoid_: ASODB (that prefix belongs to the Teams bot, not to this product); treating it as the
+site's owner
 
 **`datacaddy.co`**:
 The production domain. Registered at **Cloudflare**, whose registrar requires its domains to
