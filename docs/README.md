@@ -3,6 +3,7 @@
 | Document | What it covers |
 |---|---|
 | [`NETLIFY-SETUP.md`](NETLIFY-SETUP.md) · [pt-BR](NETLIFY-SETUP.pt-BR.md) | Standing the site up on Netlify and pointing `datacaddy.co` at it. The DNS half is a parameter table, not instructions — the zone is administered by someone who needs values, not a procedure. |
+| [`PUBLIC-SURFACE.md`](PUBLIC-SURFACE.md) · [pt-BR](PUBLIC-SURFACE.pt-BR.md) | What a public site and a public repository expose, what stays private, and the six rules that came out of auditing it. |
 | [`adr/`](adr/README.md) | Decision records. Append-only, numbered, never renumbered. |
 
 ## Conventions
