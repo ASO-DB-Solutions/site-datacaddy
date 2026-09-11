@@ -1,6 +1,6 @@
 # Configuração da hospedagem Netlify para `datacaddy.co`
 
-> **Pendente — este é o trabalho a ser feito.** O repositório compila e já foi enviado; nada está publicado ainda e `datacaddy.co` não tem registro de endereço. Leia os verbos no presente abaixo como "o que fazer", não como registro do que aconteceu. Atualize este aviso quando o site estiver no ar.
+> **Concluído — o site está no ar em `datacaddy.co` desde 2026-09-11, com certificado válido e os dois idiomas respondendo.** Mantido como referência para recriar o site na Netlify, mudar o domínio, ou diagnosticar falha de certificado. Leia os verbos no presente abaixo como "como foi feito", não como trabalho pendente. O único passo deliberadamente não executado é a mudança do `robots.txt` — o site está no ar, mas ainda pede aos buscadores que não o indexem, até o lançamento.
 
 Este guia coloca o site do DataCaddy no ar na **Netlify Free** e aponta `datacaddy.co` para ele. Destina-se a quem detém a conta Netlify e a quem administra o DNS — dois papéis que podem ser duas pessoas. Se você chegou aqui porque o deploy funciona mas o domínio próprio exibe aviso de certificado, vá direto para [Solução de problemas](#solução-de-problemas); a causa é quase sempre o proxy da Cloudflare ter ficado ligado.
 
@@ -86,7 +86,7 @@ export CONTACT_EMAIL="info@datacaddy.co"
 
 Acesse **https://app.netlify.com/signup** e escolha **Sign up with GitHub**.
 
-Use uma conta ligada à empresa, não pessoal — ela passa a ser a proprietária da publicação. O plano **Free** é o correto e suficiente: ele permite uso comercial, que é a razão de a Netlify ter sido escolhida em vez do plano Hobby da Vercel (ver ADR-0003 (ainda não escrito)).
+Use uma conta ligada à empresa, não pessoal — ela passa a ser a proprietária da publicação. O plano **Free** é o correto e suficiente: ele permite uso comercial, que é a razão de a Netlify ter sido escolhida em vez do plano Hobby da Vercel (ver [ADR-0003](adr/0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md)).
 
 Quando o GitHub perguntar quais repositórios autorizar, escolha **Only select repositories** e marque `site-datacaddy`. Não conceda acesso à organização inteira.
 
@@ -169,8 +169,8 @@ Esperado: `200`, `ssl_verify_result` igual a `0`, as três linhas de cabeçalho 
 
 ## Relação com os outros guias
 
-- `ADR-0003` (ainda não escrito) registra *por que* Netlify Free, e por que não GitHub Pages, Vercel Hobby ou Azure Static Web Apps.
-- `ADR-0002` (ainda não escrito) explica o arranjo de duas shells, `/` e `/pt-br/`, que este deploy serve.
+- [`ADR-0003`](adr/0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md) registra *por que* Netlify Free, e por que não GitHub Pages, Vercel Hobby ou Azure Static Web Apps.
+- [`ADR-0002`](adr/0002-each-language-gets-its-own-url.md) explica o arranjo de duas shells, `/` e `/pt-br/`, que este deploy serve.
 - O `.github/workflows/ci.yml` apenas *valida* pull requests. Ele não publica — a Netlify compila por conta própria, então a política de actions permitidas da organização nunca entra no caminho do deploy.
 - O [`CICD-PIPELINE-SETUP.md`](https://github.com/ASO-DB-Solutions/integration-bot/blob/master/docs/CICD-PIPELINE-SETUP.md) do projeto irmão descreve um arranjo bem diferente — um runner auto-hospedado publicando numa VM da OCI. Nada aqui se parece com aquilo, e deliberadamente: este site não tem segredos nem backend.
 

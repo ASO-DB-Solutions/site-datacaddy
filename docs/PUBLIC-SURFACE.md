@@ -146,7 +146,7 @@ git grep -n 'VITE_'
 
 - [`NETLIFY-SETUP.md`](NETLIFY-SETUP.md) covers standing the site up; this document covers what doing so exposes.
 - `AGENTS.md` holds the conventions. Rules 1–6 above are proposed additions to it, not yet adopted.
-- ADR-0003 (not yet written) will record why Netlify, including the Deploy Preview behaviour described here.
+- [ADR-0003](adr/0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md) records why Netlify, including the Deploy Preview behaviour described here.
 
 ---
 

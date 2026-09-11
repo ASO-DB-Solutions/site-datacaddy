@@ -34,8 +34,9 @@ and the contact-form endpoint all qualify. Which shade of green a button is does
 
 | # | Decision | Status |
 |---|---|---|
-| — | *none yet* | — |
+| [0001](0001-the-site-leaves-the-figma-make-harness.md) | The site leaves the Figma Make harness and becomes an ordinary Vite project | Accepted |
+| [0002](0002-each-language-gets-its-own-url.md) | Each language gets its own URL, from one shared bundle | Accepted |
+| [0003](0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md) | Netlify hosts the site, and Netlify Forms takes the contact form | Accepted |
 
-ADR-0001 (leaving Figma Make), ADR-0002 (each language gets its own URL) and ADR-0003 (Netlify
-with Netlify Forms) are referenced by `docs/NETLIFY-SETUP.md` and are the next to be written.
-Those references are deliberately plain text, not links, until the files exist.
+This table and the files must agree. A new ADR is added here in the same commit that adds it to
+the directory.

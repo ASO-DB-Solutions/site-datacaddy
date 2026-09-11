@@ -146,7 +146,7 @@ git grep -n 'VITE_'
 
 - O [`NETLIFY-SETUP.pt-BR.md`](NETLIFY-SETUP.pt-BR.md) cobre colocar o site no ar; este documento cobre o que isso expõe.
 - O `AGENTS.md` guarda as convenções. As regras 1 a 6 acima são adições propostas a ele, ainda não adotadas.
-- O ADR-0003 (ainda não escrito) registrará por que Netlify, incluindo o comportamento dos Deploy Previews descrito aqui.
+- O [ADR-0003](adr/0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md) registra por que Netlify, incluindo o comportamento dos Deploy Previews descrito aqui.
 
 ---
 
