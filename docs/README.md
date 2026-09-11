@@ -4,6 +4,8 @@
 |---|---|
 | [`NETLIFY-SETUP.md`](NETLIFY-SETUP.md) · [pt-BR](NETLIFY-SETUP.pt-BR.md) | Standing the site up on Netlify and pointing `datacaddy.co` at it. The DNS half is a parameter table, not instructions — the zone is administered by someone who needs values, not a procedure. |
 | [`PUBLIC-SURFACE.md`](PUBLIC-SURFACE.md) · [pt-BR](PUBLIC-SURFACE.pt-BR.md) | What a public site and a public repository expose, what stays private, and the six rules that came out of auditing it. |
+| [`MICROSOFT-EMAIL-SETUP.md`](MICROSOFT-EMAIL-SETUP.md) · [pt-BR](MICROSOFT-EMAIL-SETUP.pt-BR.md) | Finishing `info@datacaddy.co`: DKIM, DMARC and the mailbox. The domain is already verified in the tenant; these are the three pieces still missing. |
+| [`NETLIFY-FORMS-SETUP.md`](NETLIFY-FORMS-SETUP.md) · [pt-BR](NETLIFY-FORMS-SETUP.pt-BR.md) | Turning on the contact form's email notifications. The form is live and capturing; nobody is being told yet. |
 | [`assets.md`](assets.md) | Every third-party asset, its origin and its licence, plus the recipe that produced the optimised derivatives. |
 | [`devlog/`](devlog/README.md) | One dated report per day, for a non-technical reader. Generated from git, not from memory. |
 | [`adr/`](adr/README.md) | Decision records. Append-only, numbered, never renumbered. |
