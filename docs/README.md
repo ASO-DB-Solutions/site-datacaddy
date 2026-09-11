@@ -4,6 +4,8 @@
 |---|---|
 | [`NETLIFY-SETUP.md`](NETLIFY-SETUP.md) · [pt-BR](NETLIFY-SETUP.pt-BR.md) | Standing the site up on Netlify and pointing `datacaddy.co` at it. The DNS half is a parameter table, not instructions — the zone is administered by someone who needs values, not a procedure. |
 | [`PUBLIC-SURFACE.md`](PUBLIC-SURFACE.md) · [pt-BR](PUBLIC-SURFACE.pt-BR.md) | What a public site and a public repository expose, what stays private, and the six rules that came out of auditing it. |
+| [`assets.md`](assets.md) | Every third-party asset, its origin and its licence, plus the recipe that produced the optimised derivatives. |
+| [`devlog/`](devlog/README.md) | One dated report per day, for a non-technical reader. Generated from git, not from memory. |
 | [`adr/`](adr/README.md) | Decision records. Append-only, numbered, never renumbered. |
 
 ## Conventions
@@ -45,6 +47,6 @@ for p in pathlib.Path(".").rglob("*.md"):
 PY
 ```
 
-**Stakeholder-facing material ships as an Artifact**, alongside the two `.md` editions. This
-repository has no `docs/devlog/` — the sibling's daily report exists for a months-long build with
-a non-technical audience, and would be ceremony here.
+**Stakeholder-facing material ships as an Artifact**, alongside the two `.md` editions. The
+`docs/devlog/` entries serve the same audience in a different register — a narrative of what
+happened on a given day, rather than a guide to doing something.
