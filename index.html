@@ -13,6 +13,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Netlify's form parser runs at build time against static HTML and cannot
+         see a React-rendered form. This mirror is what registers the form; its
+         field names must match src/ContactForm.tsx exactly or submissions 404.
+         Declared once, on the root shell — both locales post to this name. -->
+    <form name="contact" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <input name="name" />
+      <input type="email" name="email" />
+      <input name="company" />
+      <textarea name="message"></textarea>
+      <input name="bot-field" />
+    </form>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

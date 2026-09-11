@@ -2,35 +2,27 @@ import React, { useState, useCallback } from "react";
 import imgHeroTexture from "@/assets/hero-texture.webp";
 import imgGolfBallDome from "@/assets/golf-dome.webp";
 import imgGolfCourse from "@/assets/cta-golf-course.webp";
+import { ContactForm } from "@/ContactForm";
+import { PrivacyModal } from "@/PrivacyModal";
+import {
+  EXPANDED,
+  REGULAR,
+  SEMIBOLD,
+  SAGE,
+  SAGE_MID,
+  FOREST,
+  ACCENT,
+  ACCENT_MID,
+  MUTED_GREEN,
+  TEXT_LIGHT,
+  CREAM,
+  INK,
+  subgrid,
+} from "@/tokens";
 
 // ── Design tokens ──────────────────────────────────────────
 const DB_ICON_PATH =
   "M136.654 1.47564C144.405 -0.491915 152.525 -0.491848 160.275 1.47564L178.825 6.18463L197.686 9.42779C205.567 10.7828 212.985 14.0853 219.266 19.0352L234.297 30.8819L250.208 41.5157C256.856 45.9591 262.29 51.9938 266.014 59.0704L274.927 76.0059L285.138 92.1924C289.404 98.9559 291.913 106.679 292.436 114.658L293.69 133.755L296.435 152.695C297.581 160.609 296.733 168.684 293.966 176.187L287.343 194.143L282.146 212.562C279.975 220.258 275.915 227.29 270.336 233.019L256.983 246.729L244.744 261.441C239.63 267.589 233.061 272.361 225.634 275.325L207.859 282.419L190.693 290.882C183.521 294.418 175.579 296.106 167.589 295.793L148.465 295.043L129.342 295.793C121.351 296.106 113.409 294.418 106.237 290.882L89.0712 282.419L71.2968 275.325C63.8698 272.361 57.3005 267.589 52.1865 261.441L39.9472 246.729L26.5947 233.019C21.0153 227.29 16.9555 220.258 14.7841 212.562L9.58687 194.143L2.9648 176.187C0.197941 168.684 -0.65053 160.609 0.496049 152.695L3.24019 133.755L4.4941 114.658C5.01793 106.679 7.52649 98.9559 11.7929 92.1924L22.0039 76.0059L30.9169 59.0704C34.641 51.9938 40.0741 45.9591 46.7226 41.5157L62.6337 30.8819L77.665 19.0352C83.9453 14.0853 91.3632 10.7828 99.2441 9.42779L118.104 6.18463L136.654 1.47564ZM148.466 75.7559C114.041 75.7559 84.9659 90.412 84.9658 107.756V187.756C84.9658 205.1 114.041 219.756 148.466 219.756C182.891 219.756 211.966 205.1 211.966 187.756V107.756C211.966 90.412 182.891 75.756 148.466 75.7559ZM196.091 187.708C195.543 191.7 177.763 203.756 148.466 203.756C119.168 203.756 101.388 191.7 100.841 187.756V168.612C112.58 175.388 129.71 179.756 148.466 179.756C167.222 179.756 184.351 175.388 196.091 168.612V187.708ZM196.091 147.708C195.543 151.7 177.763 163.756 148.466 163.756C119.168 163.756 101.388 151.7 100.841 147.756V128.612C112.58 135.388 129.71 139.756 148.466 139.756C167.222 139.756 184.351 135.388 196.091 128.612V147.708ZM148.466 91.7559C177.763 91.756 195.543 103.812 196.091 107.708C195.543 111.7 177.763 123.756 148.466 123.756C119.168 123.756 101.388 111.7 100.841 107.804C101.389 103.811 119.169 91.7559 148.466 91.7559Z";
-
-const EXPANDED: React.CSSProperties = {
-  fontFamily: "'Archivo Variable', Archivo, system-ui, sans-serif",
-  fontStyle: "normal",
-  fontVariationSettings: '"wdth" 125',
-};
-const REGULAR: React.CSSProperties = {
-  fontFamily: "'Archivo Variable', Archivo, system-ui, sans-serif",
-  fontVariationSettings: '"wdth" 100',
-};
-const SEMIBOLD: React.CSSProperties = {
-  fontFamily: "'Archivo Variable', Archivo, system-ui, sans-serif",
-  fontWeight: 600,
-  fontVariationSettings: '"wdth" 100',
-};
-const SAGE = "#c7d0c5";
-const SAGE_MID = "#aeb49b";
-const FOREST = "#152a0b";
-const ACCENT = "#26533e";
-const ACCENT_MID = "#537c69";
-const MUTED_GREEN = "#5e6d63";
-const TEXT_LIGHT = "#c7d0c5";
-const CREAM = "#f6f8f4";
-const INK = "#16281f";
-const subgrid = `linear-gradient(rgba(199,208,197,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(199,208,197,0.05) 1px,transparent 1px)`;
 
 // ── Shared small components ────────────────────────────────
 function LogoMark({ color = "#152a0b", size = 32 }: { color?: string; size?: number }) {
@@ -1641,6 +1633,7 @@ function CoverageSection() {
 
 // ── CTA section ────────────────────────────────────────────
 function CTASection() {
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   return (
     <section id="get-assessment" style={{ position: "relative", overflow: "hidden" }}>
       <div
@@ -1693,43 +1686,15 @@ function CTASection() {
             A complimentary assessment on up to five instances: workload, configuration, security
             and the right size for each one. No installation required.
           </p>
-          <div className="dc-cta-btns">
-            <a
-              href="mailto:hello@datacaddy.com"
-              style={{
-                ...SEMIBOLD,
-                fontSize: 15,
-                color: "#fff",
-                background: ACCENT,
-                border: `1px solid ${MUTED_GREEN}`,
-                borderRadius: 2,
-                padding: "14px 28px",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                textAlign: "center",
-              }}
-            >
-              Schedule a round
-            </a>
-            <a
-              href="#assessment"
-              style={{
-                ...SEMIBOLD,
-                fontSize: 15,
-                color: CREAM,
-                border: `1px solid rgba(246,248,244,0.3)`,
-                borderRadius: 2,
-                padding: "14px 28px",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                textAlign: "center",
-              }}
-            >
+          <ContactForm onOpenPrivacy={() => setPrivacyOpen(true)} />
+          <p style={{ ...REGULAR, fontSize: 14, color: "rgba(199,208,197,0.55)", margin: 0 }}>
+            <a href="#assessment" style={{ color: CREAM, textUnderlineOffset: 2 }}>
               See a sample report
             </a>
-          </div>
+          </p>
         </div>
       </div>
+      <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
     </section>
   );
 }
@@ -1764,7 +1729,7 @@ function Footer() {
           Oracle · SQL Server · PostgreSQL · MySQL
         </span>
         <a
-          href="mailto:hello@datacaddy.com"
+          href="mailto:info@datacaddy.co"
           style={{
             ...REGULAR,
             fontSize: 12.5,
@@ -1772,7 +1737,7 @@ function Footer() {
             textDecoration: "none",
           }}
         >
-          hello@datacaddy.com
+          info@datacaddy.co
         </a>
       </div>
     </footer>

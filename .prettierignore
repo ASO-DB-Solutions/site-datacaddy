@@ -1,2 +1,9 @@
 dist/
 pnpm-lock.yaml
+
+# Prose is not Prettier's to own. Formatting markdown reflows tables and swaps
+# emphasis markers, so every docs commit would carry churn unrelated to its
+# change, and the bilingual .md pairs get harder to diff against each other.
+# The docs have their own checks instead: section parity, and the link and
+# anchor audit in docs/README.md.
+*.md
