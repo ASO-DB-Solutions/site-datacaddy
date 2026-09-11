@@ -1,10 +1,10 @@
 # Configuração da hospedagem Netlify para `datacaddy.co`
 
-> **Pendente — este é o trabalho a ser feito.** O repositório compila e já foi enviado; nada está publicado ainda e `datacaddy.co` não tem registro de endereço. Leia o presente abaixo como "o que fazer", não como registro do que aconteceu. Atualize este aviso quando o site estiver no ar.
+> **Pendente — este é o trabalho a ser feito.** O repositório compila e já foi enviado; nada está publicado ainda e `datacaddy.co` não tem registro de endereço. Leia os verbos no presente abaixo como "o que fazer", não como registro do que aconteceu. Atualize este aviso quando o site estiver no ar.
 
 Este guia coloca o site do DataCaddy no ar na **Netlify Free** e aponta `datacaddy.co` para ele. Destina-se a quem detém a conta Netlify e a quem administra o DNS — dois papéis que podem ser duas pessoas. Se você chegou aqui porque o deploy funciona mas o domínio próprio exibe aviso de certificado, vá direto para [Solução de problemas](#solução-de-problemas); a causa é quase sempre o proxy da Cloudflare ter ficado ligado.
 
-A parte de DNS deste documento é deliberadamente uma **tabela de parâmetros, não um passo a passo**. O DNS de `datacaddy.co` é administrado pelo Marcelo, que não precisa que lhe expliquem como criar um registro — precisa dos valores exatos. Eles estão em [Parâmetros de DNS](#parâmetros-de-dns--repasse-estes-valores).
+A parte de DNS deste documento é deliberadamente uma **tabela de parâmetros, não um passo a passo**. O DNS de `datacaddy.co` é administrado pelo Marcelo, que não precisa de instruções sobre como criar um registro — precisa dos valores exatos. Eles estão em [Parâmetros de DNS](#4-parâmetros-de-dns--repasse-estes-valores).
 
 ## Onde isso se encaixa
 
@@ -17,7 +17,7 @@ flowchart TB
     subgraph WORK["1 · Cada pull request"]
         direction LR
         BR["Branch<br/>ticket-N-slug"] --> PR{{"Pull request<br/>para main"}}
-        PR --> CI["GitHub Actions<br/>typecheck · format · build<br/>só barra — nunca publica"]
+        PR --> CI["GitHub Actions<br/>typecheck · format · build<br/>só valida — nunca publica"]
         PR --> PV["Netlify Deploy Preview<br/>deploy-preview-N--site.netlify.app<br/>endereço próprio e descartável"]
     end
 
@@ -33,7 +33,7 @@ flowchart TB
 
     MG -->|"commit de merge"| MAIN
 
-    VIS(["Visitante"]) -->|"pede datacaddy.co"| DNS["DNS na Cloudflare<br/>proxy precisa estar DESLIGADO"]
+    VIS(["Visitante"]) -->|"acessa datacaddy.co"| DNS["DNS na Cloudflare<br/>proxy precisa estar DESLIGADO"]
     DNS -->|"apex-loadbalancer.netlify.com"| CDN
     SITE -->|"envio do formulário"| NF["Netlify Forms<br/>100 envios/mês"]
     NF -->|"notificação"| MAIL(["info@datacaddy.co"])
@@ -48,9 +48,9 @@ flowchart TB
     class DNS warn
 ```
 
-As caixas tracejadas são **verificações que barram, mas nunca publicam**. A caixa âmbar é a
+As caixas tracejadas são **verificações que validam, mas nunca publicam**. A caixa âmbar é a
 única configuração que quebra o TLS silenciosamente se estiver errada — ver
-[Parâmetros de DNS](#parâmetros-de-dns--repasse-estes-valores).
+[Parâmetros de DNS](#4-parâmetros-de-dns--repasse-estes-valores).
 
 ## Valores já conhecidos
 
@@ -64,7 +64,7 @@ As caixas tracejadas são **verificações que barram, mas nunca publicam**. A c
 | `datacaddy.co` | Domínio de produção. Registrado na **Cloudflare**; DNS em `doug.ns.cloudflare.com` / `lana.ns.cloudflare.com`. |
 | `info@datacaddy.co` | Endereço de contato exibido no site e destino das notificações do Netlify Forms. |
 | `75.2.60.5` | IPv4 do balanceador da Netlify, para registro A no apex. |
-| `apex-loadbalancer.netlify.com` | Destino da Netlify para ALIAS / ANAME / CNAME achatado no apex. Preferível ao IP puro. |
+| `apex-loadbalancer.netlify.com` | Destino da Netlify para ALIAS / ANAME / CNAME com flattening no apex. Preferível ao IP puro. |
 
 ## Defina isto primeiro
 
@@ -80,13 +80,13 @@ export CONTACT_EMAIL="info@datacaddy.co"
 - **Não move o DNS para fora da Cloudflare.** `datacaddy.co` está registrado no Cloudflare Registrar, e a [Cloudflare exige que domínios registrados nela permaneçam nos nameservers dela](https://developers.cloudflare.com/dns/nameservers/nameserver-options/). Hospedar o DNS no Azure exigiria antes transferir o registro para outro registrador — uma decisão à parte, não um passo daqui. **O Microsoft 365 não exige Azure DNS**; os registros dele funcionam normalmente na Cloudflare.
 - **Não cria a caixa postal `info@datacaddy.co`.** O Netlify Forms apenas *envia* notificações para um endereço; a caixa precisa existir no tenant do 365, ou ser um encaminhamento. Tratado separadamente.
 - **Não torna o site visível para buscadores.** O `public/robots.txt` atualmente bloqueia tudo, de propósito. Essa mudança é um commit próprio, no lançamento.
-- **O destino do CNAME `www` não é conhecido de antemão.** A Netlify atribui um subdomínio aleatório (ex.: `brave-curie-12345.netlify.app`) quando o site é criado. O passo 2 é onde você o lê.
+- **O destino do CNAME `www` não é conhecido de antemão.** A Netlify atribui um subdomínio aleatório (ex.: `brave-curie-12345.netlify.app`) quando o site é criado. É no passo 2 que você o obtém.
 
 ## 1. Criar a conta Netlify — OWNER
 
 Acesse **https://app.netlify.com/signup** e escolha **Sign up with GitHub**.
 
-Use uma conta ligada à empresa, não pessoal — ela passa a ser a dona do deploy. O plano **Free** é o correto e suficiente: ele permite uso comercial, que é a razão de a Netlify ter sido escolhida em vez do plano Hobby da Vercel (ver ADR-0003 (ainda não escrito)).
+Use uma conta ligada à empresa, não pessoal — ela passa a ser a proprietária da publicação. O plano **Free** é o correto e suficiente: ele permite uso comercial, que é a razão de a Netlify ter sido escolhida em vez do plano Hobby da Vercel (ver ADR-0003 (ainda não escrito)).
 
 Quando o GitHub perguntar quais repositórios autorizar, escolha **Only select repositories** e marque `site-datacaddy`. Não conceda acesso à organização inteira.
 
@@ -98,7 +98,7 @@ A Netlify lê o `netlify.toml` do repositório, então comando de build, diretó
 
 Clique em **Deploy**. O primeiro build leva cerca de um minuto.
 
-Depois anote o subdomínio atribuído, exibido no topo da visão geral do site como `algo-algo-12345.netlify.app`. **Anote — o passo 4 precisa dele.**
+Depois, copie o subdomínio atribuído, exibido no topo da visão geral do site como `algo-algo-12345.netlify.app`. **Guarde — o passo 4 precisa dele.**
 
 ```bash
 export NETLIFY_SUBDOMAIN="<cole-aqui>.netlify.app"
@@ -108,7 +108,7 @@ export NETLIFY_SUBDOMAIN="<cole-aqui>.netlify.app"
 
 **Site configuration → Forms → Form notifications → Add notification → Email notification.**
 
-Enviar para `info@datacaddy.co`. Nada chegará enquanto o formulário de contato não existir, mas configurar agora garante que o primeiro envio real não se perca.
+Envie para `info@datacaddy.co`. Nada chegará enquanto o formulário de contato não existir, mas configurar agora garante que o primeiro envio real não se perca.
 
 ## 4. Parâmetros de DNS — repasse estes valores
 
@@ -116,11 +116,11 @@ Estes são os registros de `datacaddy.co`. O Marcelo administra a zona; ele prec
 
 | Tipo | Nome | Valor | Proxy | Observações |
 |---|---|---|---|---|
-| CNAME *(achatado)* | `@` (apex) | `apex-loadbalancer.netlify.com` | **DESLIGADO** | Preferível. A Cloudflare achata CNAME no apex, então funciona onde outros provedores exigiriam o registro A abaixo. |
-| A *(alternativa)* | `@` (apex) | `75.2.60.5` | **DESLIGADO** | Use apenas se o CNAME achatado não estiver disponível. Um IP fixo é mais frágil. |
+| CNAME *(flattening)* | `@` (apex) | `apex-loadbalancer.netlify.com` | **DESLIGADO** | Preferível. A Cloudflare faz flattening de CNAME no apex, então funciona onde outros provedores exigiriam o registro A abaixo. |
+| A *(alternativa)* | `@` (apex) | `75.2.60.5` | **DESLIGADO** | Use apenas se o flattening não estiver disponível. Um IP fixo é mais frágil. |
 | CNAME | `www` | `$NETLIFY_SUBDOMAIN` do passo 2 | **DESLIGADO** | ex.: `brave-curie-12345.netlify.app` |
 
-**A coluna do proxy é a parte que dá errado.** O proxy da Cloudflare (nuvem laranja) precisa estar **desligado** (nuvem cinza, "DNS only") nos dois registros. Ligado, a Cloudflare termina o TLS por conta própria e a Netlify não consegue concluir o desafio HTTP-01 do Let's Encrypt; o sintoma é um erro de certificado que parece falha da Netlify e não é.
+**A coluna do proxy é a parte que dá errado.** O proxy da Cloudflare (nuvem laranja) precisa estar **desligado** (nuvem cinza, "DNS only") nos dois registros. Ligado, a Cloudflare faz a terminação do TLS por conta própria e a Netlify não consegue concluir o desafio HTTP-01 do Let's Encrypt; o sintoma é um erro de certificado que parece falha da Netlify e não é.
 
 Os registros de e-mail de `info@datacaddy.co` **não** estão listados aqui. O centro de administração do Microsoft 365 gera o próprio conjunto MX/TXT/CNAME quando o domínio é adicionado ao tenant; eles vão na mesma zona da Cloudflare e não conflitam com os dois registros acima.
 
@@ -171,7 +171,7 @@ Esperado: `200`, `ssl_verify_result` igual a `0`, as três linhas de cabeçalho 
 
 - `ADR-0003` (ainda não escrito) registra *por que* Netlify Free, e por que não GitHub Pages, Vercel Hobby ou Azure Static Web Apps.
 - `ADR-0002` (ainda não escrito) explica o arranjo de duas shells, `/` e `/pt-br/`, que este deploy serve.
-- O `.github/workflows/ci.yml` apenas *barra* pull requests. Ele não publica — a Netlify compila por conta própria, então a política de actions permitidas da organização nunca entra no caminho do deploy.
+- O `.github/workflows/ci.yml` apenas *valida* pull requests. Ele não publica — a Netlify compila por conta própria, então a política de actions permitidas da organização nunca entra no caminho do deploy.
 - O [`CICD-PIPELINE-SETUP.md`](https://github.com/ASO-DB-Solutions/integration-bot/blob/master/docs/CICD-PIPELINE-SETUP.md) do projeto irmão descreve um arranjo bem diferente — um runner auto-hospedado publicando numa VM da OCI. Nada aqui se parece com aquilo, e deliberadamente: este site não tem segredos nem backend.
 
 ---

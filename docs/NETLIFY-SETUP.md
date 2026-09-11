@@ -4,7 +4,7 @@
 
 This stands the DataCaddy site up on **Netlify Free** and points `datacaddy.co` at it. It is for whoever holds the Netlify account and whoever manages DNS — two roles that may be two people. If you are here because the site deploys fine but the custom domain shows a certificate warning, skip to [Troubleshooting](#troubleshooting); the cause is almost always the Cloudflare proxy being left on.
 
-The DNS half of this document is deliberately a **parameter table, not instructions**. DNS for `datacaddy.co` is administered by Marcelo, who does not need to be told how to add a record — he needs the exact values. They are in [DNS parameters](#dns-parameters-hand-these-over).
+The DNS half of this document is deliberately a **parameter table, not instructions**. DNS for `datacaddy.co` is administered by Marcelo, who does not need to be told how to add a record — he needs the exact values. They are in [DNS parameters](#4-dns-parameters--hand-these-over).
 
 ## Where this fits
 
@@ -48,7 +48,7 @@ flowchart TB
 ```
 
 Dashed boxes are **checks that gate but never publish**. The amber box is the one setting that
-silently breaks TLS if it is wrong — see [DNS parameters](#dns-parameters-hand-these-over).
+silently breaks TLS if it is wrong — see [DNS parameters](#4-dns-parameters--hand-these-over).
 
 ## Already-known values
 
