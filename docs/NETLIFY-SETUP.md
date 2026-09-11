@@ -1,6 +1,6 @@
 # Netlify hosting setup for `datacaddy.co`
 
-> **Not done — this is the work outstanding.** The repository builds and is pushed; nothing is deployed yet and `datacaddy.co` has no address record. Read the present tense below as "what to do", not as a record of what happened. Update this banner when the site is live.
+> **Done — the site has been live at `datacaddy.co` since 2026-09-11, with a valid certificate and both locales serving.** Kept as the reference for rebuilding the Netlify site, moving the domain, or diagnosing a certificate failure. Read the present tense below as "how it was done", not as work outstanding. The one step deliberately not taken is the `robots.txt` flip — the site is live but still asks search engines not to index it, until launch.
 
 This stands the DataCaddy site up on **Netlify Free** and points `datacaddy.co` at it. It is for whoever holds the Netlify account and whoever manages DNS — two roles that may be two people. If you are here because the site deploys fine but the custom domain shows a certificate warning, skip to [Troubleshooting](#troubleshooting); the cause is almost always the Cloudflare proxy being left on.
 
@@ -84,7 +84,7 @@ export CONTACT_EMAIL="info@datacaddy.co"
 
 Go to **https://app.netlify.com/signup** and choose **Sign up with GitHub**.
 
-Use an account tied to the company, not a personal one — this becomes the deploy owner. The **Free** plan is correct and sufficient: it permits commercial use, which is the reason Netlify was chosen over Vercel's Hobby plan (see ADR-0003 (not yet written)).
+Use an account tied to the company, not a personal one — this becomes the deploy owner. The **Free** plan is correct and sufficient: it permits commercial use, which is the reason Netlify was chosen over Vercel's Hobby plan (see [ADR-0003](adr/0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md)).
 
 When GitHub asks which repositories to authorise, choose **Only select repositories** and pick `site-datacaddy`. Do not grant the whole organisation.
 
@@ -167,8 +167,8 @@ Expected: `200`, `ssl_verify_result` of `0`, three header lines present, `lang="
 
 ## Relationship to the other guides
 
-- `ADR-0003` (not yet written) records *why* Netlify Free, and why not GitHub Pages, Vercel Hobby, or Azure Static Web Apps.
-- `ADR-0002` (not yet written) explains the two-shell `/` and `/pt-br/` layout this deployment serves.
+- [`ADR-0003`](adr/0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md) records *why* Netlify Free, and why not GitHub Pages, Vercel Hobby, or Azure Static Web Apps.
+- [`ADR-0002`](adr/0002-each-language-gets-its-own-url.md) explains the two-shell `/` and `/pt-br/` layout this deployment serves.
 - `.github/workflows/ci.yml` only *gates* pull requests. It does not deploy — Netlify builds independently, so the organisation's allowed-actions policy never sits in the deploy path.
 - The sibling project's [`CICD-PIPELINE-SETUP.md`](https://github.com/ASO-DB-Solutions/integration-bot/blob/master/docs/CICD-PIPELINE-SETUP.md) describes a very different arrangement — a self-hosted runner deploying to an OCI VM. Nothing here resembles it, and deliberately so: this site has no secrets and no backend.
 
