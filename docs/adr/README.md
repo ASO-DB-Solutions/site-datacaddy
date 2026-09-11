@@ -1,0 +1,41 @@
+# Architecture decision records
+
+One file per hard-to-reverse decision. Numbered sequentially, `NNNN-kebab-case-title.md`, never
+renumbered.
+
+**They are append-only.** A decision that no longer holds is not edited away: the superseding ADR
+says `Supersedes [NNNN]`, and the superseded one gains a `**Status: Superseded by [NNNN].**`
+header at the top. Corrections and things learned later go in a dated `## Addendum` section at
+the bottom, so the reasoning as it stood stays readable next to what reality did to it.
+
+## Shape
+
+A title that states the decision as a sentence, a context paragraph in bold-decision form, then:
+
+```
+## Considered Options
+- **Option A.** Rejected: <why>.
+- **Option B** (chosen): <why>.
+
+## Consequences
+- What this costs, what it forecloses, what will be forgotten later.
+```
+
+Consequences are the part worth writing carefully. A consequence nobody wrote down is the one
+that surprises someone in four months.
+
+## What earns an ADR
+
+A decision is worth recording when reversing it would mean rewriting code, re-doing an external
+setup, or renegotiating with someone outside the team. Hosting, URL layout, the i18n mechanism
+and the contact-form endpoint all qualify. Which shade of green a button is does not.
+
+## Index
+
+| # | Decision | Status |
+|---|---|---|
+| — | *none yet* | — |
+
+ADR-0001 (leaving Figma Make), ADR-0002 (each language gets its own URL) and ADR-0003 (Netlify
+with Netlify Forms) are referenced by `docs/NETLIFY-SETUP.md` and are the next to be written.
+Those references are deliberately plain text, not links, until the files exist.
