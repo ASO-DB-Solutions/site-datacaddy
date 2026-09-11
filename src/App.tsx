@@ -1709,7 +1709,7 @@ function Footer() {
     <footer
       style={{
         background: "#0d2010",
-        padding: "40px max(4vw,20px)",
+        padding: "40px max(4vw,20px) 76px",
         borderTop: "1px solid rgba(199,208,197,0.08)",
       }}
     >
@@ -1744,7 +1744,7 @@ function Footer() {
               whiteSpace: "nowrap",
             }}
           >
-            ASO TECH GLOBAL. LLC
+            ASO Tech Global LLC
           </span>
         </div>
         <span style={{ ...REGULAR, fontSize: 12.5, color: "rgba(199,208,197,0.38)" }}>
