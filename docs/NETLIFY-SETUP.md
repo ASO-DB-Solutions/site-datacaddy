@@ -8,22 +8,47 @@ The DNS half of this document is deliberately a **parameter table, not instructi
 
 ## Where this fits
 
-```mermaid
-flowchart TD
-    DEV["Developer pushes to main<br/>ASO-DB-Solutions/site-datacaddy"] --> GH["GitHub"]
-    GH -->|"webhook"| NB["Netlify build<br/>reads netlify.toml<br/>pnpm run build → dist/"]
-    GH -->|"pull request"| PR["Deploy Preview<br/>throwaway URL per PR"]
-    NB --> CDN["Netlify CDN<br/>serves dist/, issues TLS"]
-    VIS["Visitor"] -->|"datacaddy.co"| DNS["Cloudflare DNS<br/>proxy OFF"]
-    DNS -->|"apex-loadbalancer.netlify.com"| CDN
-    FORM["Contact form"] -->|"POST /"| NF["Netlify Forms<br/>100 submissions/month"]
-    NF -->|"notification"| MAIL["info@datacaddy.co"]
+Two paths reach Netlify, and only one of them reaches the public. A pull request gets
+**checked twice and published to a throwaway address**; production is built **only from `main`**.
 
-    classDef ours fill:#e8f0e6,stroke:#26533e,color:#152a0b
-    classDef ext fill:#f4f1e8,stroke:#8a7f5c,color:#332d1a
-    class DEV,GH,NB,PR,CDN,NF ours
-    class DNS,VIS,MAIL,FORM ext
+```mermaid
+flowchart TB
+    subgraph WORK["1 · Every pull request"]
+        direction LR
+        BR["Branch<br/>ticket-N-slug"] --> PR{{"Pull request<br/>to main"}}
+        PR --> CI["GitHub Actions<br/>typecheck · format · build<br/>gates only — never deploys"]
+        PR --> PV["Netlify Deploy Preview<br/>deploy-preview-N--site.netlify.app<br/>its own throwaway address"]
+    end
+
+    CI -->|"all green"| MG{"Review<br/>and merge"}
+    PV -->|"visual check"| MG
+
+    subgraph LIVE["2 · Production — only from main"]
+        direction LR
+        MAIN[["main"]] --> BLD["Netlify build<br/>pnpm run build → dist/"]
+        BLD --> CDN["Netlify CDN<br/>issues the TLS certificate"]
+        CDN --> SITE["Live site<br/>/ and /pt-br/"]
+    end
+
+    MG -->|"merge commit"| MAIN
+
+    VIS(["Visitor"]) -->|"asks for datacaddy.co"| DNS["Cloudflare DNS<br/>proxy must be OFF"]
+    DNS -->|"apex-loadbalancer.netlify.com"| CDN
+    SITE -->|"form submission"| NF["Netlify Forms<br/>100 submissions/month"]
+    NF -->|"notification"| MAIL(["info@datacaddy.co"])
+
+    classDef ours fill:#e8f0e6,stroke:#26533e,stroke-width:1.5px,color:#152a0b
+    classDef gate fill:#eef2ea,stroke:#537c69,stroke-width:1.5px,color:#16281f,stroke-dasharray:5 3
+    classDef ext fill:#f4f1e8,stroke:#8a7f5c,stroke-width:1.5px,color:#332d1a
+    classDef warn fill:#f6efd9,stroke:#7a5c16,stroke-width:2px,color:#3d2f0a
+    class BR,PR,MG,MAIN,BLD,CDN,SITE ours
+    class CI,PV gate
+    class VIS,NF,MAIL ext
+    class DNS warn
 ```
+
+Dashed boxes are **checks that gate but never publish**. The amber box is the one setting that
+silently breaks TLS if it is wrong — see [DNS parameters](#dns-parameters-hand-these-over).
 
 ## Already-known values
 

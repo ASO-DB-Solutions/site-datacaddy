@@ -8,22 +8,49 @@ A parte de DNS deste documento é deliberadamente uma **tabela de parâmetros, n
 
 ## Onde isso se encaixa
 
-```mermaid
-flowchart TD
-    DEV["Desenvolvedor envia para main<br/>ASO-DB-Solutions/site-datacaddy"] --> GH["GitHub"]
-    GH -->|"webhook"| NB["Build na Netlify<br/>lê netlify.toml<br/>pnpm run build → dist/"]
-    GH -->|"pull request"| PR["Deploy Preview<br/>URL descartável por PR"]
-    NB --> CDN["CDN da Netlify<br/>serve dist/, emite TLS"]
-    VIS["Visitante"] -->|"datacaddy.co"| DNS["DNS na Cloudflare<br/>proxy DESLIGADO"]
-    DNS -->|"apex-loadbalancer.netlify.com"| CDN
-    FORM["Formulário de contato"] -->|"POST /"| NF["Netlify Forms<br/>100 envios/mês"]
-    NF -->|"notificação"| MAIL["info@datacaddy.co"]
+Dois caminhos chegam à Netlify, e só um deles chega ao público. Um pull request é
+**verificado duas vezes e publicado num endereço descartável**; a produção é construída
+**somente a partir de `main`**.
 
-    classDef ours fill:#e8f0e6,stroke:#26533e,color:#152a0b
-    classDef ext fill:#f4f1e8,stroke:#8a7f5c,color:#332d1a
-    class DEV,GH,NB,PR,CDN,NF ours
-    class DNS,VIS,MAIL,FORM ext
+```mermaid
+flowchart TB
+    subgraph WORK["1 · Cada pull request"]
+        direction LR
+        BR["Branch<br/>ticket-N-slug"] --> PR{{"Pull request<br/>para main"}}
+        PR --> CI["GitHub Actions<br/>typecheck · format · build<br/>só barra — nunca publica"]
+        PR --> PV["Netlify Deploy Preview<br/>deploy-preview-N--site.netlify.app<br/>endereço próprio e descartável"]
+    end
+
+    CI -->|"tudo verde"| MG{"Revisão<br/>e merge"}
+    PV -->|"conferência visual"| MG
+
+    subgraph LIVE["2 · Produção — só a partir de main"]
+        direction LR
+        MAIN[["main"]] --> BLD["Build na Netlify<br/>pnpm run build → dist/"]
+        BLD --> CDN["CDN da Netlify<br/>emite o certificado TLS"]
+        CDN --> SITE["Site no ar<br/>/ e /pt-br/"]
+    end
+
+    MG -->|"commit de merge"| MAIN
+
+    VIS(["Visitante"]) -->|"pede datacaddy.co"| DNS["DNS na Cloudflare<br/>proxy precisa estar DESLIGADO"]
+    DNS -->|"apex-loadbalancer.netlify.com"| CDN
+    SITE -->|"envio do formulário"| NF["Netlify Forms<br/>100 envios/mês"]
+    NF -->|"notificação"| MAIL(["info@datacaddy.co"])
+
+    classDef ours fill:#e8f0e6,stroke:#26533e,stroke-width:1.5px,color:#152a0b
+    classDef gate fill:#eef2ea,stroke:#537c69,stroke-width:1.5px,color:#16281f,stroke-dasharray:5 3
+    classDef ext fill:#f4f1e8,stroke:#8a7f5c,stroke-width:1.5px,color:#332d1a
+    classDef warn fill:#f6efd9,stroke:#7a5c16,stroke-width:2px,color:#3d2f0a
+    class BR,PR,MG,MAIN,BLD,CDN,SITE ours
+    class CI,PV gate
+    class VIS,NF,MAIL ext
+    class DNS warn
 ```
+
+As caixas tracejadas são **verificações que barram, mas nunca publicam**. A caixa âmbar é a
+única configuração que quebra o TLS silenciosamente se estiver errada — ver
+[Parâmetros de DNS](#parâmetros-de-dns--repasse-estes-valores).
 
 ## Valores já conhecidos
 
