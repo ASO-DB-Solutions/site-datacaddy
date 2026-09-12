@@ -1,6 +1,6 @@
 # Turning on the contact form's notifications
 
-> **Partly done — the form is built, deployed and detected.** `datacaddy.co` has been serving the assessment form since 2026-09-11, and Netlify is capturing submissions. What is missing is the notification: right now a submission is stored and nobody is told. One setting closes that. Update this banner once a test submission has arrived by email.
+> **Not working yet — and the earlier version of this document was wrong about why.** It said the form was "built, deployed and detected" and that only the notification was missing. It was not detected. **Netlify form detection is off by default on sites created since 2023-04-12**, so every submission since launch has returned 404 and been discarded — nothing is waiting in the dashboard. Enabling detection is step 1 and requires a redeploy; the notification is step 2. Update this banner once a test submission has arrived by email.
 
 Someone can fill in the form today and Netlify will keep what they wrote — but no one will know
 until they log in and look. If you are here because a submission did not arrive by email, the
@@ -69,7 +69,28 @@ Nothing to export — every step is in the Netlify dashboard.
 - **It cannot stop all spam.** The form has a honeypot and a submit-time floor, and Netlify adds
   its own filtering. A public form on a public repository will still attract some.
 
-## 1. Set the notification address — OWNER
+## 1. Enable form detection, then redeploy — OWNER
+
+**This is the step that was missing, and nothing works without it.** Netlify turns form detection
+off by default on every site created since 2023-04-12, to keep builds fast. With it off, the
+build-time parser never scans for forms, so `contact` is never registered and every POST to it is
+answered `404` — indistinguishable from a form that does not exist.
+
+**Forms → Usage and configuration → Form detection → Enable form detection.**
+
+Then **redeploy**: Deploys → Trigger deploy → Deploy site. Enabling detection applies only to
+*new* deploys, never retroactively, so the existing build stays unscanned until one runs.
+
+Verify before moving on — this must return `200`, not `404`:
+
+```bash
+curl -sS -o /dev/null -w '%{http_code}\n' -X POST \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data 'form-name=contact&name=Test&email=test@example.com&message=detection+check' \
+  https://datacaddy.co/
+```
+
+## 2. Set the notification address — OWNER
 
 **[app.netlify.com](https://app.netlify.com)** → your site → **Forms**.
 
@@ -84,7 +105,7 @@ Then: **Form notifications** → **Add notification** → **Email notification**
 
 Save. That is the whole change.
 
-## 2. Send a test submission — OWNER
+## 3. Send a test submission — OWNER
 
 Go to [datacaddy.co](https://datacaddy.co), fill the form in properly, and submit.
 
@@ -95,7 +116,7 @@ message either way, so a rushed test looks like it worked while going nowhere.
 Then check both places: the submission should appear under **Forms**, and the notification should
 arrive by email within a minute or two.
 
-## 3. Decide who gets told — OWNER
+## 4. Decide who gets told — OWNER
 
 A single address is the simplest arrangement and the one to start with. Two refinements are worth
 knowing about, neither urgent:
@@ -123,10 +144,15 @@ command can do: a test submission appearing in **Forms** *and* arriving by email
 
 ## Troubleshooting
 
-**No `contact` form appears in the dashboard.** Netlify's parser runs at build time against static
-HTML and cannot see a React-rendered form. The repository carries a hidden static mirror in
-`index.html` for exactly this reason. If it is missing, a deploy removed it — check the verify
-step above against the live site, and redeploy.
+**No `contact` form appears in the dashboard, and submissions return 404.** Two different causes,
+and the first is far more likely:
+
+1. **Form detection is off** — the default since 2023-04-12. Step 1 fixes it, and it needs a
+   redeploy afterwards. This was the actual cause here, and it is hard to diagnose because the
+   symptom is identical to a form that was never written.
+2. **The hidden static mirror is missing.** Netlify's parser runs at build time against static HTML
+   and cannot see a React-rendered form, so `index.html` carries a mirror. If a deploy removed it,
+   the verify command in step 1 returns 404 even with detection on. Check the live site.
 
 **Submissions return a 404.** The field names in the hidden form and the React component have
 drifted apart. They must match exactly. CI checks this, so a 404 means something changed outside
