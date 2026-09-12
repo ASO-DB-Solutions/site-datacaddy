@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import imgHeroTexture from "@/assets/hero-texture.webp";
 import imgGolfBallDome from "@/assets/golf-dome.webp";
 import imgGolfCourse from "@/assets/cta-golf-course.webp";
@@ -148,14 +148,14 @@ function ResponsiveStyles() {
   return (
     <style>{`
       *, *::before, *::after { box-sizing: border-box; }
-      html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+      html { scroll-behavior: smooth; scroll-padding-top: 64px; }
 
       .dc-sp  { padding: 96px max(4vw, 24px); }
       .dc-in  { max-width: 1180px; margin: 0 auto; }
 
       /* Nav */
       .dc-nav-links { display: flex; align-items: center; gap: 26px; }
-      .dc-hamburger { display: none; background: none; border: none; cursor: pointer; color: ${ACCENT}; padding: 4px; }
+      .dc-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
 
       /* Drawer overlay */
       .dc-drawer-overlay {
@@ -175,10 +175,10 @@ function ResponsiveStyles() {
       .dc-drawer-link { display: block; font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-variation-settings: "wdth" 100; font-size: 17px; color: ${INK}; text-decoration: none; padding: 13px 0; border-bottom: 1px solid ${SAGE}; letter-spacing: -0.1px; }
       .dc-drawer-link:last-of-type { border-bottom: none; }
 
-      /* Hero ball wrapper — desktop: 75% wide centered; mobile: full width */
+      /* Hero ball wrapper — desktop: 600px centered; mobile: full width */
       .dc-ball-wrap {
         position: absolute; bottom: 0; z-index: 2; pointer-events: none;
-        width: 75%; left: 50%; transform: translateX(-50%);
+        width: 600px; left: 50%; transform: translateX(-50%);
       }
 
       /* Hero copy — ball-wrap is fixed 600px wide → dome height ≈ 163px */
@@ -229,6 +229,9 @@ function ResponsiveStyles() {
       /* Footer inner */
       .dc-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
 
+      /* Coverage db grid — always 4 cols until mobile */
+      .dc-g4-fixed { display: grid; grid-template-columns: repeat(4,1fr); }
+
       /* ── Tablet ≤ 1024px ─── */
       @media (max-width: 1024px) {
         .dc-g4  { grid-template-columns: repeat(2,1fr); }
@@ -240,14 +243,15 @@ function ResponsiveStyles() {
 
       /* ── Mobile ≤ 640px ─── */
       @media (max-width: 640px) {
+        .dc-g4-fixed { grid-template-columns: 1fr 1fr; }
         .dc-sp { padding: 60px 20px; }
 
         /* Nav */
         .dc-nav-links { display: none; }
         .dc-hamburger { display: flex; }
 
-        /* Mobile: ball is full width, restore wrapper and adjust copy padding */
-        .dc-ball-wrap { width: 100%; left: 0; transform: none; }
+        /* Mobile: ball is full width, centered */
+        .dc-ball-wrap { width: 100%; left: 50%; transform: translateX(-50%); }
         .dc-hero-copy { padding: 76px 20px 27vw; }
 
         /* Grids */
@@ -285,15 +289,30 @@ const NAV_LINKS: { label: string; href: string }[] = [
 ];
 
 function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const linkColor = scrolled ? INK : ACCENT;
+
   return (
     <nav
       style={{
-        position: "absolute",
-        top: 20,
+        position: "fixed",
+        top: 0,
         left: 0,
         right: 0,
-        zIndex: 20,
+        zIndex: 50,
         padding: "0 max(4vw, 20px)",
+        background: scrolled ? "rgba(246,248,244,0.92)" : "transparent",
+        backdropFilter: scrolled ? "blur(12px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(21,42,11,0.09)" : "1px solid transparent",
+        transition: "background 0.3s, border-color 0.3s, backdrop-filter 0.3s",
       }}
     >
       <div
@@ -306,7 +325,11 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
           height: 64,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <a
+          href="#"
+          aria-label="DataCaddy — back to top"
+          style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}
+        >
           <LogoMark color={ACCENT} size={32} />
           <span
             style={{
@@ -315,12 +338,13 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
               fontWeight: 300,
               fontSize: 21,
               letterSpacing: "-0.4px",
-              color: ACCENT,
+              color: linkColor,
+              transition: "color 0.3s",
             }}
           >
             Data<span style={{ fontWeight: 700 }}>Caddy</span>
           </span>
-        </div>
+        </a>
 
         {/* Desktop links */}
         <div className="dc-nav-links">
@@ -331,7 +355,8 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
               style={{
                 ...REGULAR,
                 fontSize: 14,
-                color: ACCENT,
+                color: linkColor,
+                transition: "color 0.3s",
                 opacity: 0.75,
                 textDecoration: "none",
                 whiteSpace: "nowrap",
@@ -361,7 +386,12 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
         </div>
 
         {/* Mobile hamburger */}
-        <button className="dc-hamburger" onClick={onOpenMenu} aria-label="Open menu">
+        <button
+          className="dc-hamburger"
+          onClick={onOpenMenu}
+          aria-label="Open menu"
+          style={{ color: scrolled ? INK : ACCENT }}
+        >
           <IconMenu />
         </button>
       </div>
@@ -972,7 +1002,13 @@ function RightsizingSection() {
 }
 
 // ── Migration calculator ───────────────────────────────────
-type Destination = "AWS RDS" | "Azure Database";
+/**
+ * Keys are opaque identifiers, never the visible label. Nina's 2026-09-11
+ * export keyed the instance tables off the button text ("AWS RDS" etc.), which
+ * makes a copy edit silently change which cloud's pricing is shown. Labels live
+ * in DEST_LABEL; everything else keys off these. See ADR-0002.
+ */
+type Destination = "aws" | "azure" | "oci" | "gcp";
 
 const AWS_INSTANCES = [
   { name: "db.r6i.large", vcpu: 2, memGb: 16, ph: 0.24 },
@@ -990,7 +1026,47 @@ const AZURE_INSTANCES = [
   { name: "Standard_D32ds_v4", vcpu: 32, memGb: 128, ph: 3.07 },
   { name: "Standard_D64ds_v4", vcpu: 64, memGb: 256, ph: 6.14 },
 ];
-const STORAGE_PER_GB = 0.115; // gp3 / Azure managed, $/GB/mo
+const OCI_INSTANCES = [
+  { name: "VM.Standard3.Flex-2", vcpu: 2, memGb: 16, ph: 0.21 },
+  { name: "VM.Standard3.Flex-4", vcpu: 4, memGb: 32, ph: 0.42 },
+  { name: "VM.Standard3.Flex-8", vcpu: 8, memGb: 64, ph: 0.84 },
+  { name: "VM.Standard3.Flex-16", vcpu: 16, memGb: 128, ph: 1.68 },
+  { name: "VM.Standard3.Flex-32", vcpu: 32, memGb: 256, ph: 3.36 },
+  { name: "VM.Standard3.Flex-64", vcpu: 64, memGb: 512, ph: 6.72 },
+];
+const GCP_INSTANCES = [
+  { name: "db-n1-standard-2", vcpu: 2, memGb: 8, ph: 0.22 },
+  { name: "db-n1-standard-4", vcpu: 4, memGb: 15, ph: 0.44 },
+  { name: "db-n1-standard-8", vcpu: 8, memGb: 30, ph: 0.88 },
+  { name: "db-n1-standard-16", vcpu: 16, memGb: 60, ph: 1.75 },
+  { name: "db-n1-standard-32", vcpu: 32, memGb: 120, ph: 3.5 },
+  { name: "db-n1-standard-64", vcpu: 64, memGb: 240, ph: 7.0 },
+];
+
+const DEST_INSTANCES: Record<Destination, typeof AWS_INSTANCES> = {
+  aws: AWS_INSTANCES,
+  azure: AZURE_INSTANCES,
+  oci: OCI_INSTANCES,
+  gcp: GCP_INSTANCES,
+};
+
+/** The only place a Destination becomes words a visitor reads. */
+const DEST_LABEL: Record<Destination, string> = {
+  aws: "AWS RDS",
+  azure: "Azure Database",
+  oci: "Oracle Cloud",
+  gcp: "Google Cloud",
+};
+
+const DEST_STORAGE_LABEL: Record<Destination, string> = {
+  aws: "gp3",
+  azure: "managed",
+  oci: "block vol",
+  gcp: "SSD PD",
+};
+
+const DESTINATIONS = Object.keys(DEST_LABEL) as Destination[];
+const STORAGE_PER_GB = 0.115; // $/GB/mo reference across providers
 const HRS = 730;
 
 function calcMigration(
@@ -1001,7 +1077,7 @@ function calcMigration(
   storageGb: number,
   dest: Destination,
 ) {
-  const instances = dest === "AWS RDS" ? AWS_INSTANCES : AZURE_INSTANCES;
+  const instances = DEST_INSTANCES[dest];
   const last = instances[instances.length - 1];
 
   const findFit = (minVcpu: number, minMem: number) =>
@@ -1068,7 +1144,7 @@ function MigrationSection() {
   const [cpuPeak, setCpuPeak] = useState(27);
   const [memPeak, setMemPeak] = useState(41);
   const [storageGb, setStorageGb] = useState(900);
-  const [dest, setDest] = useState<Destination>("AWS RDS");
+  const [dest, setDest] = useState<Destination>("aws");
 
   const result = calcMigration(vcpu, memGb, cpuPeak, memPeak, storageGb, dest);
   const fmt = useCallback((n: number) => `US$ ${n.toLocaleString("en-US")}`, []);
@@ -1209,7 +1285,7 @@ function MigrationSection() {
             <div>
               <label className="dc-calc-label">Destination</label>
               <div style={{ display: "flex", gap: 8 }}>
-                {(["AWS RDS", "Azure Database"] as Destination[]).map((d) => (
+                {DESTINATIONS.map((d) => (
                   <button
                     key={d}
                     className={`dc-dest-btn${dest === d ? " active" : ""}`}
@@ -1273,7 +1349,7 @@ function MigrationSection() {
               }}
             >
               {result.rightSized.vcpu} vCPU · {result.rightSized.memGb} GB · {storageGb} GB{" "}
-              {dest === "AWS RDS" ? "gp3" : "managed"}
+              {DEST_STORAGE_LABEL[dest]}
             </span>
           </div>
 
@@ -1281,9 +1357,9 @@ function MigrationSection() {
             {[
               {
                 label:
-                  dest === "AWS RDS"
+                  dest === "aws"
                     ? "Mirrored migration, as it stands today"
-                    : "Mirrored migration to " + dest,
+                    : `Mirrored migration to ${DEST_LABEL[dest]}`,
                 value: `${fmt(result.mirrorCost)}/mo`,
                 strike: true,
               },

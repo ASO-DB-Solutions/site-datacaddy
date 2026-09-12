@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useCopy } from "@/CopyProvider";
-import { ACCENT, CREAM, MUTED_GREEN, REGULAR, SEMIBOLD, TEXT_LIGHT } from "@/tokens";
+import { ACCENT, CREAM, EXPANDED, MUTED_GREEN, REGULAR, SEMIBOLD, TEXT_LIGHT } from "@/tokens";
 
 /**
  * The assessment request form.
@@ -57,6 +57,7 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
 
       const next: Partial<Record<Field, string>> = {};
       if (!values.name.trim()) next.name = c.required;
+      if (!values.company.trim()) next.company = c.required;
       if (!values.email.trim()) next.email = c.required;
       else if (!EMAIL.test(values.email.trim())) next.email = c.invalidEmail;
       setErrors(next);
@@ -93,22 +94,22 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
   if (status === "sent") {
     return (
       <div role="status" style={panel}>
-        <p style={{ ...SEMIBOLD, fontSize: 17, color: CREAM, margin: "0 0 6px" }}>
-          {c.successTitle}
+        <p style={{ ...EXPANDED, fontSize: 20, color: CREAM, margin: 0 }}>{c.successTitle}</p>
+        <p style={{ ...REGULAR, fontSize: 15, color: TEXT_LIGHT, margin: 0, lineHeight: 1.6 }}>
+          {c.successBody}
         </p>
-        <p style={{ ...REGULAR, fontSize: 15, color: TEXT_LIGHT, margin: 0 }}>{c.successBody}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} noValidate style={{ display: "grid", gap: 14, maxWidth: 480 }}>
+    <form onSubmit={submit} noValidate style={{ display: "grid", gap: 16, maxWidth: 640 }}>
       <style>{`
         .dc-f-input {
           width: 100%; box-sizing: border-box;
-          background: rgba(246,248,244,0.06);
-          border: 1px solid rgba(199,208,197,0.28);
-          border-radius: 2px; padding: 11px 13px;
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(199,208,197,0.22);
+          border-radius: 2px; padding: 12px 14px;
           color: ${CREAM}; font-size: 15px;
           font-family: 'Archivo Variable', Archivo, system-ui, sans-serif;
           transition: border-color .15s, background .15s;
@@ -116,14 +117,19 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
         .dc-f-input::placeholder { color: rgba(199,208,197,0.42); }
         .dc-f-input:focus {
           outline: none;
-          border-color: rgba(199,208,197,0.75);
-          background: rgba(246,248,244,0.1);
+          border-color: rgba(199,208,197,0.55);
+          background: rgba(255,255,255,0.1);
         }
+        .dc-f-input:focus-visible { outline: 2px solid rgba(199,208,197,0.75); outline-offset: 1px; }
+        .dc-f-req { color: #b23a2c; }
+        .dc-f-opt { color: rgba(199,208,197,0.35); font-style: italic; text-transform: none; letter-spacing: 0; }
+        .dc-f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @media (max-width: 560px) { .dc-f-row { grid-template-columns: 1fr; } }
         .dc-f-input[aria-invalid="true"] { border-color: #d98f6a; }
         .dc-f-label {
           display: block; font-size: 12px; letter-spacing: .04em;
-          text-transform: uppercase; color: rgba(199,208,197,0.6);
-          margin-bottom: 6px;
+          text-transform: uppercase; color: rgba(199,208,197,0.5);
+          letter-spacing: 0.05em; margin-bottom: 6px;
           font-family: 'Archivo Variable', Archivo, system-ui, sans-serif;
         }
         .dc-f-err { font-size: 13px; color: #e8a684; margin: 5px 0 0; }
@@ -146,49 +152,47 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
         </label>
       </p>
 
-      {(
-        [
-          ["name", c.name, "text", "name"],
-          ["email", c.email, "email", "email"],
-          ["company", c.company, "text", "organization"],
-        ] as const
-      ).map(([field, label, type, ac]) => (
-        <div key={field}>
-          <label className="dc-f-label" htmlFor={`dc-${field}`}>
-            {label}
-            {field === "company" && (
-              <span style={{ textTransform: "none", opacity: 0.65 }}> · {c.optional}</span>
-            )}
-          </label>
-          <input
-            id={`dc-${field}`}
-            className="dc-f-input"
-            name={field}
-            type={type}
-            autoComplete={ac}
-            value={values[field]}
-            onChange={set(field)}
-            aria-invalid={Boolean(errors[field])}
-            aria-describedby={errors[field] ? `dc-${field}-err` : undefined}
-          />
-          {errors[field] && (
-            <p className="dc-f-err" id={`dc-${field}-err`}>
-              {errors[field]}
-            </p>
-          )}
-        </div>
-      ))}
+      <div className="dc-f-row">
+        <TextField
+          field="name"
+          label={c.name}
+          type="text"
+          autoComplete="name"
+          value={values.name}
+          error={errors.name}
+          onChange={set("name")}
+        />
+        <TextField
+          field="email"
+          label={c.email}
+          type="email"
+          autoComplete="email"
+          value={values.email}
+          error={errors.email}
+          onChange={set("email")}
+        />
+      </div>
+
+      <TextField
+        field="company"
+        label={c.company}
+        type="text"
+        autoComplete="organization"
+        value={values.company}
+        error={errors.company}
+        onChange={set("company")}
+      />
 
       <div>
         <label className="dc-f-label" htmlFor="dc-message">
-          {c.message}
-          <span style={{ textTransform: "none", opacity: 0.65 }}> · {c.optional}</span>
+          {c.message} <span className="dc-f-opt">({c.optional})</span>
         </label>
         <textarea
           id="dc-message"
           className="dc-f-input"
           name="message"
-          rows={3}
+          rows={4}
+          style={{ resize: "vertical", minHeight: 96, lineHeight: 1.55 }}
           placeholder={c.messagePlaceholder}
           value={values.message}
           onChange={set("message")}
@@ -243,10 +247,61 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
   );
 }
 
+/** One required text field. Nina's 2026-09-11 design marks required fields with
+ *  a red asterisk and puts name and email side by side. */
+function TextField({
+  field,
+  label,
+  type,
+  autoComplete,
+  value,
+  error,
+  onChange,
+}: {
+  field: string;
+  label: string;
+  type: string;
+  autoComplete: string;
+  value: string;
+  error?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div>
+      <label className="dc-f-label" htmlFor={`dc-${field}`}>
+        {label}{" "}
+        <span className="dc-f-req" aria-hidden="true">
+          *
+        </span>
+      </label>
+      <input
+        id={`dc-${field}`}
+        className="dc-f-input"
+        name={field}
+        type={type}
+        required
+        autoComplete={autoComplete}
+        value={value}
+        onChange={onChange}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `dc-${field}-err` : undefined}
+      />
+      {error && (
+        <p className="dc-f-err" id={`dc-${field}-err`}>
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 const panel: React.CSSProperties = {
-  maxWidth: 480,
-  background: "rgba(246,248,244,0.07)",
-  border: "1px solid rgba(199,208,197,0.28)",
-  borderRadius: 3,
-  padding: "20px 22px",
+  maxWidth: 640,
+  background: "rgba(46,125,91,0.18)",
+  border: "1px solid rgba(46,125,91,0.45)",
+  borderRadius: 4,
+  padding: "28px 24px",
+  display: "flex",
+  flexDirection: "column",
+  gap: 10,
 };
