@@ -1,6 +1,6 @@
 # Ligando as notificações do formulário de contato
 
-> **Parcialmente concluído — o formulário está pronto, publicado e detectado.** O `datacaddy.co` serve o formulário de assessment desde 2026-09-11, e a Netlify já está capturando os envios. O que falta é a notificação: hoje um envio é armazenado e ninguém é avisado. Uma única configuração resolve. Atualize este aviso assim que um envio de teste chegar por e-mail.
+> **Ainda não funciona — e a versão anterior deste documento errou o motivo.** Ela dizia que o formulário estava "pronto, publicado e detectado" e que só faltava a notificação. Ele não estava detectado. **A detecção de formulários da Netlify vem desligada por padrão em sites criados desde 2023-04-12**, então todo envio desde o lançamento respondeu 404 e foi descartado — não há nada esperando no painel. Ligar a detecção é o passo 1 e exige um novo deploy; a notificação é o passo 2. Atualize este aviso assim que um envio de teste chegar por e-mail.
 
 Alguém pode preencher o formulário hoje e a Netlify guarda o que foi escrito — mas ninguém vai
 saber até entrar e olhar. Se você chegou aqui porque um envio não chegou por e-mail, a causa é
@@ -72,7 +72,29 @@ Nada a exportar — todos os passos são no painel da Netlify.
   Netlify acrescenta a filtragem dela. Um formulário público num repositório público ainda assim
   atrai alguma coisa.
 
-## 1. Definir o endereço de notificação — OWNER
+## 1. Ligar a detecção de formulários, e republicar — OWNER
+
+**Este é o passo que faltava, e nada funciona sem ele.** A Netlify deixa a detecção de formulários
+desligada por padrão em todo site criado desde 2023-04-12, para acelerar os builds. Com ela
+desligada, o analisador nunca procura formulários no build, o `contact` nunca é registrado, e todo
+POST para ele responde `404` — indistinguível de um formulário que não existe.
+
+**Forms → Usage and configuration → Form detection → Enable form detection.**
+
+Depois **republique**: Deploys → Trigger deploy → Deploy site. Ligar a detecção vale apenas para
+deploys *novos*, nunca retroativamente, então o build atual continua sem ser analisado até que um
+rode.
+
+Verifique antes de seguir — isto precisa responder `200`, não `404`:
+
+```bash
+curl -sS -o /dev/null -w '%{http_code}\n' -X POST \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data 'form-name=contact&name=Teste&email=teste@example.com&message=checagem' \
+  https://datacaddy.co/
+```
+
+## 2. Definir o endereço de notificação — OWNER
 
 **[app.netlify.com](https://app.netlify.com)** → seu site → **Forms**.
 
@@ -88,7 +110,7 @@ Depois: **Form notifications** → **Add notification** → **Email notification
 
 Salve. A mudança é só essa.
 
-## 2. Enviar um teste — OWNER
+## 3. Enviar um teste — OWNER
 
 Acesse o [datacaddy.co](https://datacaddy.co), preencha o formulário direito e envie.
 
@@ -100,7 +122,7 @@ ido a lugar nenhum.
 Depois confira os dois lugares: o envio deve aparecer em **Forms**, e a notificação deve chegar por
 e-mail em um ou dois minutos.
 
-## 3. Decidir quem é avisado — OWNER
+## 4. Decidir quem é avisado — OWNER
 
 Um único endereço é o arranjo mais simples e o certo para começar. Dois refinamentos valem ser
 conhecidos, nenhum urgente:
@@ -128,10 +150,15 @@ verdade, que nenhum comando faz: um envio de teste aparecendo em **Forms** *e* c
 
 ## Solução de problemas
 
-**Nenhum formulário `contact` aparece no painel.** O analisador da Netlify roda no momento do build
-sobre HTML estático e não enxerga um formulário renderizado pelo React. O repositório carrega um
-espelho estático oculto no `index.html` exatamente por isso. Se ele sumiu, algum deploy o removeu —
-rode a verificação acima contra o site no ar e publique de novo.
+**Nenhum formulário `contact` aparece no painel, e os envios respondem 404.** São duas causas
+diferentes, e a primeira é bem mais provável:
+
+1. **A detecção de formulários está desligada** — o padrão desde 2023-04-12. O passo 1 resolve, e
+   exige um novo deploy depois. Foi essa a causa aqui, e é difícil de diagnosticar porque o sintoma
+   é idêntico ao de um formulário que nunca foi escrito.
+2. **O espelho estático oculto sumiu.** O analisador da Netlify roda no build sobre HTML estático e
+   não enxerga um formulário renderizado pelo React, por isso o `index.html` carrega um espelho. Se
+   um deploy o removeu, a verificação do passo 1 responde 404 mesmo com a detecção ligada.
 
 **Os envios respondem 404.** Os nomes dos campos no formulário oculto e no componente React
 divergiram. Precisam bater exatamente. O CI checa isso, então um 404 significa que algo mudou fora
