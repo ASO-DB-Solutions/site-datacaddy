@@ -90,6 +90,12 @@ LLC owns the site.
 _Avoid_: ASODB (that prefix belongs to the Teams bot, not to this product); treating it as the
 site's owner
 
+**`app.datacaddy.co`**:
+The product itself — where a customer signs in. Live behind Cloudflare with a valid certificate
+since 2026-09-13, covered by the `*.datacaddy.co` wildcard. The marketing site links to it from
+the nav and the mobile drawer. Distinct from this repository, which is only the marketing site.
+_Avoid_: the app (ambiguous), 144.22.135.180:94 (the pre-TLS address it replaced)
+
 **`datacaddy.co`**:
 The production domain. Registered at **Cloudflare**, whose registrar requires its domains to
 stay on Cloudflare nameservers. Note `datacaddy.com` resolves to an unrelated host and is not

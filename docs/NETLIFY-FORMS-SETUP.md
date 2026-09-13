@@ -1,6 +1,6 @@
 # Turning on the contact form's notifications
 
-> **Not working yet — and the earlier version of this document was wrong about why.** It said the form was "built, deployed and detected" and that only the notification was missing. It was not detected. **Netlify form detection is off by default on sites created since 2023-04-12**, so every submission since launch has returned 404 and been discarded — nothing is waiting in the dashboard. Enabling detection is step 1 and requires a redeploy; the notification is step 2. Update this banner once a test submission has arrived by email.
+> **Done — the form has been accepting submissions since 2026-09-13.** Form detection was enabled and the site redeployed; `form-name=contact` now answers 200 where an unregistered form answers 404. Kept as the reference for re-enabling detection after a project is recreated, and for diagnosing a form that silently stops accepting. Read the present tense below as "how it was done". The notification address is the one step to confirm — see step 2.
 
 Someone can fill in the form today and Netlify will keep what they wrote — but no one will know
 until they log in and look. If you are here because a submission did not arrive by email, the

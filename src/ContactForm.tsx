@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useCopy } from "@/CopyProvider";
-import { REVIEW, REVIEW_ITEMS, reviewMark, reviewProps } from "@/review";
 import { ACCENT, CREAM, EXPANDED, MUTED_GREEN, REGULAR, SEMIBOLD, TEXT_LIGHT } from "@/tokens";
 
 /**
@@ -218,9 +217,7 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
       <button
         type="submit"
         disabled={status === "sending"}
-        {...(REVIEW ? reviewProps(REVIEW_ITEMS[1].why) : {})}
         style={{
-          ...(REVIEW ? reviewMark(REVIEW_ITEMS[1].why) : {}),
           ...SEMIBOLD,
           fontSize: 15,
           color: "#fff",

@@ -1,6 +1,6 @@
 # Ligando as notificações do formulário de contato
 
-> **Ainda não funciona — e a versão anterior deste documento errou o motivo.** Ela dizia que o formulário estava "pronto, publicado e detectado" e que só faltava a notificação. Ele não estava detectado. **A detecção de formulários da Netlify vem desligada por padrão em sites criados desde 2023-04-12**, então todo envio desde o lançamento respondeu 404 e foi descartado — não há nada esperando no painel. Ligar a detecção é o passo 1 e exige um novo deploy; a notificação é o passo 2. Atualize este aviso assim que um envio de teste chegar por e-mail.
+> **Concluído — o formulário aceita envios desde 2026-09-13.** A detecção de formulários foi ligada e o site republicado; `form-name=contact` agora responde 200, onde um formulário não registrado responde 404. Mantido como referência para reativar a detecção depois de recriar o projeto, e para diagnosticar um formulário que pare de aceitar envios. Leia os verbos no presente abaixo como "como foi feito". O endereço de notificação é o passo a confirmar — ver passo 2.
 
 Alguém pode preencher o formulário hoje e a Netlify guarda o que foi escrito — mas ninguém vai
 saber até entrar e olhar. Se você chegou aqui porque um envio não chegou por e-mail, a causa é
