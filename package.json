@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check:i18n": "node --experimental-strip-types scripts/check-i18n.ts"
+    "check:i18n": "node --experimental-strip-types scripts/check-i18n.ts",
+    "review": "VITE_REVIEW=1 vite build && vite preview --port 4173"
   },
   "dependencies": {
     "react": "^19.0.0",
