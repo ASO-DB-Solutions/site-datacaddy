@@ -570,7 +570,7 @@ function Hero({ onOpenMenu }: { onOpenMenu: () => void }) {
         </div>
       </div>
 
-      <div className="dc-ball-wrap" style={{ width: 600 }}>
+      <div className="dc-ball-wrap">
         <svg
           width="100%"
           viewBox="0 0 1832 499"
@@ -1284,7 +1284,7 @@ function MigrationSection() {
             {/* Destination toggle */}
             <div>
               <label className="dc-calc-label">Destination</label>
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {DESTINATIONS.map((d) => (
                   <button
                     key={d}
@@ -1307,7 +1307,8 @@ function MigrationSection() {
               }}
             >
               Target capacity = observed peak + 30% CPU headroom, 15% memory headroom. Reference
-              prices: on-demand, single-AZ, us-east-1 / East US, list price.
+              prices: on-demand / pay-as-you-go list price. AWS: us-east-1 · Azure: East US · OCI:
+              us-ashburn-1 · GCP: us-central1.
             </p>
           </div>
         </div>
