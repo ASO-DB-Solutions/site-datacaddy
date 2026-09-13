@@ -1,5 +1,5 @@
-import { en } from "./en";
-import { ptBR } from "./pt-BR";
+import { en } from "./en.ts";
+import { ptBR } from "./pt-BR.ts";
 
 /**
  * Pure data only — no React, no DOM. `vite.config.ts` imports this at config

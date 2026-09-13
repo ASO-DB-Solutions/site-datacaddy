@@ -1,4 +1,4 @@
-import type { Copy } from "./index";
+import type { Copy } from "./index.ts";
 
 /**
  * Portuguese copy.
