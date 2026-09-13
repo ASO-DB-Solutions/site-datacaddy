@@ -67,6 +67,26 @@ a build failure rather than a blank on the page.
 was both the button text and the branch condition selecting a cloud provider's instance table —
 translating the label would have silently switched providers.
 
+### Showing work that cannot ship (adopted 2026-09-12)
+
+Work that is finished but blocked on somebody else is rendered in a **review build**, outlined and
+annotated, rather than held out of the tree. Holding it out makes the reviewable artefact differ
+from the designed one with nothing saying so. `corepack pnpm run review`; see ADR-0005.
+
+**Gate every call site on the build-time literal, not just the helper's body.**
+
+```tsx
+{...(REVIEW ? reviewProps(reason) : {})}      // correct — dead code in production
+{...reviewProps(reason)}                       // WRONG — the argument still evaluates
+```
+
+A helper that returns `{}` when the flag is off looks sufficient and is not: calling it
+unconditionally still evaluates its arguments, which keeps the data referenced and every string in
+it alive in the shipped bundle. That is how an insecure URL reached a production build here.
+
+**Then grep the artefact.** An assertion about what a bundler removes is worth nothing until
+`dist/assets/*.js` has been searched for the string that must not be there.
+
 ### Assets
 
 Optimised derivatives are committed; multi-megabyte originals are not. The repository is public,
