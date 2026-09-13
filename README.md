@@ -18,13 +18,20 @@ corepack pnpm install --frozen-lockfile
 corepack pnpm run dev              # http://localhost:5173  (hot reload)
 corepack pnpm run build            # -> dist/
 corepack pnpm exec vite preview    # http://localhost:4173  (serves the real build)
+corepack pnpm run review           # build + serve WITH blocked work on show
 ```
+
+`review` is not a debug mode. It renders work that is finished but blocked on something external —
+today a sign-in link waiting on a certificate, a contact form waiting on a Netlify setting, and
+unverified cloud pricing — each outlined in red with its reason and who is blocking. A production
+build contains none of it; see [ADR-0005](docs/adr/0005-unshippable-work-is-shown-behind-a-build-time-flag.md).
 
 The gate chain, which CI runs on every pull request:
 
 ```bash
 corepack pnpm run typecheck     # load-bearing: a green build does NOT prove valid TypeScript
 corepack pnpm run format:check
+corepack pnpm run check:i18n    # catches a translation left as its English original
 corepack pnpm run build
 ```
 

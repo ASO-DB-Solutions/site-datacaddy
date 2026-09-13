@@ -38,6 +38,7 @@ and the contact-form endpoint all qualify. Which shade of green a button is does
 | [0002](0002-each-language-gets-its-own-url.md) | Each language gets its own URL, from one shared bundle | Accepted |
 | [0003](0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md) | Netlify hosts the site, and Netlify Forms takes the contact form | Accepted |
 | [0004](0004-the-calculator-keys-clouds-by-identifier-not-by-label.md) | The migration calculator keys clouds by identifier, not by the visible label | Accepted |
+| [0005](0005-unshippable-work-is-shown-behind-a-build-time-flag.md) | Work that cannot ship is shown behind a build-time flag, never a runtime one | Accepted |
 
 This table and the files must agree. A new ADR is added here in the same commit that adds it to
 the directory.
