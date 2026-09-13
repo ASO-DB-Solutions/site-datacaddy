@@ -80,7 +80,7 @@ export CONTACT_EMAIL="info@datacaddy.co"
 - **Não move o DNS para fora da Cloudflare.** `datacaddy.co` está registrado no Cloudflare Registrar, e a [Cloudflare exige que domínios registrados nela permaneçam nos nameservers dela](https://developers.cloudflare.com/dns/nameservers/nameserver-options/). Hospedar o DNS no Azure exigiria antes transferir o registro para outro registrador — uma decisão à parte, não um passo daqui. **O Microsoft 365 não exige Azure DNS**; os registros dele funcionam normalmente na Cloudflare.
 - **Não cria a caixa postal `info@datacaddy.co`.** O Netlify Forms apenas *envia* notificações para um endereço; a caixa precisa existir no tenant do 365, ou ser um encaminhamento. Tratado separadamente.
 - **Não torna o site visível para buscadores.** O `public/robots.txt` atualmente bloqueia tudo, de propósito. Essa mudança é um commit próprio, no lançamento.
-- **O destino do CNAME `www` não é conhecido de antemão.** A Netlify atribui um subdomínio aleatório (ex.: `brave-curie-12345.netlify.app`) quando o site é criado. É no passo 2 que você o obtém.
+- ~~O destino do CNAME `www` não é conhecido de antemão.~~ **Resolvido em 2026-09-12: é `datacaddy.netlify.app`.** A Netlify atribui o subdomínio na criação; o deste projeto agora é conhecido e está na tabela abaixo.
 
 ## 1. Criar a conta Netlify — OWNER
 
@@ -118,7 +118,7 @@ Estes são os registros de `datacaddy.co`. O Marcelo administra a zona; ele prec
 |---|---|---|---|---|
 | CNAME *(flattening)* | `@` (apex) | `apex-loadbalancer.netlify.com` | **DESLIGADO** | Preferível. A Cloudflare faz flattening de CNAME no apex, então funciona onde outros provedores exigiriam o registro A abaixo. |
 | A *(alternativa)* | `@` (apex) | `75.2.60.5` | **DESLIGADO** | Use apenas se o flattening não estiver disponível. Um IP fixo é mais frágil. |
-| CNAME | `www` | `$NETLIFY_SUBDOMAIN` do passo 2 | **DESLIGADO** | ex.: `brave-curie-12345.netlify.app` |
+| CNAME | `www` | `datacaddy.netlify.app` | **DESLIGADO** | O subdomínio atribuído, confirmado em 2026-09-12 |
 
 **A coluna do proxy é a parte que dá errado.** O proxy da Cloudflare (nuvem laranja) precisa estar **desligado** (nuvem cinza, "DNS only") nos dois registros. Ligado, a Cloudflare faz a terminação do TLS por conta própria e a Netlify não consegue concluir o desafio HTTP-01 do Let's Encrypt; o sintoma é um erro de certificado que parece falha da Netlify e não é.
 

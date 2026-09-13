@@ -78,7 +78,7 @@ export CONTACT_EMAIL="info@datacaddy.co"
 - **It cannot move DNS off Cloudflare.** `datacaddy.co` is registered with Cloudflare Registrar, and [Cloudflare requires registrar domains to stay on Cloudflare nameservers](https://developers.cloudflare.com/dns/nameservers/nameserver-options/). Hosting DNS in Azure would mean transferring the registration to another registrar first — a separate decision, not a step here. **Microsoft 365 mail does not require Azure DNS**; its records work fine in Cloudflare.
 - **It cannot create the `info@datacaddy.co` mailbox.** Netlify Forms only *sends* notifications to an address; the mailbox itself has to exist in the 365 tenant, or be a forwarder. Tracked separately.
 - **It cannot make the site public to search engines.** `public/robots.txt` currently disallows everything, deliberately. That flip is its own commit at launch.
-- **The `www` CNAME target is not knowable in advance.** Netlify assigns a random subdomain (e.g. `brave-curie-12345.netlify.app`) when the site is created. Step 2 is where you read it off.
+- ~~The `www` CNAME target is not knowable in advance.~~ **Resolved 2026-09-12: it is `datacaddy.netlify.app`.** Netlify assigns the subdomain at creation; this project's is now known and recorded in the table below.
 
 ## 1. Create the Netlify account — OWNER
 
@@ -116,7 +116,7 @@ These are the records for `datacaddy.co`. Marcelo administers the zone; he needs
 |---|---|---|---|---|
 | CNAME *(flattened)* | `@` (apex) | `apex-loadbalancer.netlify.com` | **OFF** | Preferred. Cloudflare flattens CNAMEs at the apex, so this works where other providers would need the A record below. |
 | A *(alternative)* | `@` (apex) | `75.2.60.5` | **OFF** | Use only if the flattened CNAME is unavailable. A fixed IP is more brittle. |
-| CNAME | `www` | `$NETLIFY_SUBDOMAIN` from step 2 | **OFF** | e.g. `brave-curie-12345.netlify.app` |
+| CNAME | `www` | `datacaddy.netlify.app` | **OFF** | The assigned subdomain, confirmed 2026-09-12 |
 
 **The proxy column is the part that goes wrong.** Cloudflare's orange-cloud proxy must be **off** (grey cloud, "DNS only") for both records. Left on, Cloudflare terminates TLS itself and Netlify cannot complete the Let's Encrypt HTTP-01 challenge; the symptom is a certificate error that looks like a Netlify fault and is not.
 
