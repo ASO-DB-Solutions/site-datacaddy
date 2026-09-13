@@ -69,3 +69,22 @@ the procedure rather than a thing someone might think to do.
   pulses it. On a long single page, a note that cannot find its subject goes unread.
 - **Marks use `outline`, not `border`**, so they never shift the layout. A review that changes the
   thing being reviewed is worse than no review.
+
+
+## Addendum (2026-09-13): two of the three items cleared, and what that cost
+
+`app.datacaddy.co` now exists with a valid certificate, so the Sign in link ships normally —
+unwrapped from the flag, repointed from the bare IP, and no longer marked. Netlify form detection
+was enabled and the site redeployed, so the contact form accepts submissions. Only the unverified
+cloud pricing still carries a mark.
+
+**The mechanism worked as intended**: clearing an item meant deleting its entry from
+`REVIEW_ITEMS` and unwrapping one block, and because the outlines and the panel read from the same
+array, nothing had to be kept in step by hand.
+
+One cost worth recording. Diagnosing whether the form was registered meant POSTing to it, and a
+registered form **accepts those POSTs** — so roughly nine junk submissions were created in the
+owner's dashboard and counted against a 100/month quota. There is no read-only way to ask Netlify
+whether a form is registered from outside the account; the only externally observable difference
+between a registered and an unregistered form is whether a real submission succeeds. Diagnose with
+one probe, not five, and tell the owner to expect it.

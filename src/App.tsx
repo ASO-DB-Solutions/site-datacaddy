@@ -368,26 +368,22 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
               {label}
             </a>
           ))}
-          {REVIEW && (
-            <a
-              href="http://144.22.135.180:94/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                ...REGULAR,
-                fontSize: 14,
-                color: linkColor,
-                opacity: 0.75,
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                transition: "color 0.3s",
-                ...(REVIEW ? reviewMark(REVIEW_ITEMS[0].why) : {}),
-              }}
-              {...(REVIEW ? reviewProps(REVIEW_ITEMS[0].why) : {})}
-            >
-              Sign in
-            </a>
-          )}
+          <a
+            href="https://app.datacaddy.co/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              ...REGULAR,
+              fontSize: 14,
+              color: linkColor,
+              opacity: 0.75,
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+              transition: "color 0.3s",
+            }}
+          >
+            Sign in
+          </a>
           <a
             href="#get-assessment"
             style={{
@@ -478,19 +474,15 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
         >
           Get an assessment
         </a>
-        {REVIEW && (
-          <a
-            href="http://144.22.135.180:94/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="dc-drawer-link"
-            onClick={onClose}
-            style={REVIEW ? reviewMark(REVIEW_ITEMS[0].why) : undefined}
-            {...(REVIEW ? reviewProps(REVIEW_ITEMS[0].why) : {})}
-          >
-            Sign in
-          </a>
-        )}
+        <a
+          href="https://app.datacaddy.co/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dc-drawer-link"
+          onClick={onClose}
+        >
+          Sign in
+        </a>
         <p style={{ ...REGULAR, fontSize: 12, color: MUTED_GREEN, marginTop: 20, lineHeight: 1.6 }}>
           Oracle · SQL Server · PostgreSQL · MySQL
         </p>
@@ -1325,11 +1317,11 @@ function MigrationSection() {
                     className={`dc-dest-btn${dest === d ? " active" : ""}`}
                     style={
                       REVIEW && (d === "oci" || d === "gcp")
-                        ? reviewMark(REVIEW_ITEMS[2].why)
+                        ? reviewMark(REVIEW_ITEMS[0].why)
                         : undefined
                     }
                     {...(REVIEW && (d === "oci" || d === "gcp")
-                      ? reviewProps(REVIEW_ITEMS[2].why)
+                      ? reviewProps(REVIEW_ITEMS[0].why)
                       : {})}
                     onClick={() => setDest(d)}
                   >

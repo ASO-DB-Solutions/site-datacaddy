@@ -41,16 +41,8 @@ export type ReviewItem = { what: string; why: string };
  *  cannot drift apart. */
 export const REVIEW_ITEMS: ReviewItem[] = [
   {
-    what: "Sign in",
-    why: "Points at http://144.22.135.180:94/ — bare IP, no TLS. Waiting on Marcelo's domain and certificate.",
-  },
-  {
-    what: "Contact form",
-    why: "Netlify form detection is off, so every submission returns 404 and is discarded. Waiting on Marcelo.",
-  },
-  {
     what: "Oracle Cloud / Google Cloud pricing",
-    why: "Unverified. OCI uses a compute shape, not a managed database, priced at roughly 4x the compute list rate.",
+    why: "Unverified. OCI names a compute shape, not a managed database, priced at roughly 4x the compute list rate and well under the managed-database rate. It matches neither.",
   },
 ];
 
