@@ -219,13 +219,10 @@ function ResponsiveStyles() {
       .dc-dest-btn { flex: 1; padding: 11px 16px; border-radius: 2px; cursor: pointer; font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-weight: 600; font-size: 14px; transition: all 0.15s; border: 1px solid rgba(199,208,197,0.3); background: transparent; color: ${TEXT_LIGHT}; }
       .dc-dest-btn.active { background: ${CREAM}; color: ${INK}; border-color: ${CREAM}; }
 
-      /* CTA buttons */
       .dc-cta-btns { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
-      .dc-cta-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,440px); gap: clamp(32px,5vw,64px); align-items: start; }
       /* The form is the page's one conversion goal, so it is the one element
          lifted off the background — and the panel is what keeps its labels
          legible where the gradient thins over the photograph. */
-      .dc-cta-form { background: rgba(13,32,16,0.82); border: 1px solid rgba(199,208,197,0.16); border-radius: 3px; padding: clamp(22px,3vw,30px); backdrop-filter: blur(2px); }
 
       /* Footer inner */
       .dc-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
@@ -265,8 +262,6 @@ function ResponsiveStyles() {
         /* Buttons */
         .dc-hero-btns { flex-direction: column; align-items: stretch; width: 100%; max-width: 280px; }
         .dc-cta-btns  { flex-direction: column; }
-        .dc-cta-grid  { grid-template-columns: 1fr; gap: 34px; }
-        .dc-cta-form  { padding: 20px 18px; }
 
         /* Footer */
         .dc-foot { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -1787,8 +1782,8 @@ function CTASection() {
           paddingBottom: "clamp(72px,10vw,112px)",
         }}
       >
-        <div className="dc-cta-grid">
-          <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <div style={{ maxWidth: 640, display: "flex", flexDirection: "column", gap: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <h2
               style={{
                 ...EXPANDED,
@@ -1805,8 +1800,9 @@ function CTASection() {
               A complimentary assessment on up to five instances: workload, configuration, security
               and the right size for each one. No installation required.
             </p>
-            <ContactForm onOpenPrivacy={() => setPrivacyOpen(true)} />
           </div>
+
+          <ContactForm onOpenPrivacy={() => setPrivacyOpen(true)} />
         </div>
       </div>
       <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
