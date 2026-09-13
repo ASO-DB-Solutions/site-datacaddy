@@ -114,6 +114,10 @@ Salve. A mudança é só essa.
 
 Acesse o [datacaddy.co](https://datacaddy.co), preencha o formulário direito e envie.
 
+**O botão de envio fica apagado até que nome, e-mail e empresa estejam preenchidos e o endereço
+pareça válido.** Isso é o formulário funcionando, não um defeito — uma linha abaixo do botão diz o
+que ainda falta. A mensagem é opcional.
+
 **Leve mais de três segundos nisso.** O formulário descarta silenciosamente envios concluídos mais
 rápido do que uma pessoa plausivelmente conseguiria — uma medida deliberada contra robôs — e exibe
 a mesma mensagem de sucesso nos dois casos, então um teste apressado parece ter funcionado sem ter
