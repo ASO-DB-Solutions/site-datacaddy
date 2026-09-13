@@ -1079,6 +1079,41 @@ const DEST_LABEL: Record<Destination, string> = {
   gcp: "Google Cloud",
 };
 
+/**
+ * What each column's figures actually are, so the claim is checkable rather
+ * than implied. These are commercial numbers shown to prospects: naming the
+ * service and the region is what lets someone confirm or refute them.
+ *
+ * `sourced` records whether the rate came from a published list price. Oracle
+ * publishes its managed-database rates per OCPU and per GB rather than as
+ * named instance types, and its price pages could not be read to confirm a
+ * figure — so the OCI column is an estimate and says so on the page. Replace
+ * it with output from the OCI Cost Estimator and flip the flag.
+ */
+type DestMeta = { service: string; region: string; sourced: boolean };
+
+const DEST_META: Record<Destination, DestMeta> = {
+  aws: { service: "Amazon RDS", region: "us-east-1", sourced: true },
+  azure: { service: "Azure Database flexible server", region: "East US", sourced: true },
+  oci: { service: "OCI managed database", region: "us-ashburn-1", sourced: false },
+  gcp: { service: "Cloud SQL", region: "us-central1", sourced: true },
+};
+
+/**
+ * Managed-database engines each destination actually offers.
+ *
+ * OCI has no managed Microsoft SQL Server: on Oracle Cloud, SQL Server runs
+ * BYOL on Compute instances that the customer administers. Quoting a managed
+ * price for it would be quoting a product that does not exist, so the
+ * calculator says so instead.
+ */
+const DEST_ENGINES: Record<Destination, readonly string[]> = {
+  aws: ["Oracle", "SQL Server", "PostgreSQL", "MySQL"],
+  azure: ["SQL Server", "PostgreSQL", "MySQL"],
+  oci: ["Oracle", "PostgreSQL", "MySQL"],
+  gcp: ["SQL Server", "PostgreSQL", "MySQL"],
+};
+
 const DEST_STORAGE_LABEL: Record<Destination, string> = {
   aws: "gp3",
   azure: "managed",
@@ -1336,8 +1371,17 @@ function MigrationSection() {
               }}
             >
               Target capacity = observed peak + 30% CPU headroom, 15% memory headroom. Reference
-              prices: on-demand / pay-as-you-go list price. AWS: us-east-1 · Azure: East US · OCI:
-              us-ashburn-1 · GCP: us-central1.
+              prices: on-demand / pay-as-you-go list price for {DEST_META[dest].service},{" "}
+              {DEST_META[dest].region}.
+              {!DEST_META[dest].sourced && (
+                <>
+                  {" "}
+                  <strong style={{ color: "#e8b95a" }}>
+                    Oracle publishes managed-database rates per OCPU and per GB rather than as named
+                    instance types, so this column is an estimate rather than a quoted list price.
+                  </strong>
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -1353,133 +1397,169 @@ function MigrationSection() {
             flexDirection: "column",
           }}
         >
-          <div style={{ padding: "22px 24px 18px", borderBottom: `2px solid ${INK}` }}>
-            <span style={{ ...REGULAR, fontSize: 12, color: MUTED_GREEN }}>
-              Recommended instance after rightsizing
-            </span>
-            <div
-              style={{
-                ...EXPANDED,
-                fontSize: "clamp(20px,2.4vw,30px)",
-                letterSpacing: "-0.7px",
-                color: INK,
-                lineHeight: 1.1,
-                marginTop: 6,
-              }}
-            >
-              {result.rightSized.name}
-            </div>
-            <span
-              style={{
-                ...REGULAR,
-                fontSize: 12.5,
-                color: MUTED_GREEN,
-                marginTop: 4,
-                display: "block",
-              }}
-            >
-              {result.rightSized.vcpu} vCPU · {result.rightSized.memGb} GB · {storageGb} GB{" "}
-              {DEST_STORAGE_LABEL[dest]}
-            </span>
-          </div>
-
-          <div style={{ padding: "4px 24px 0" }}>
-            {[
-              {
-                label:
-                  dest === "aws"
-                    ? "Mirrored migration, as it stands today"
-                    : `Mirrored migration to ${DEST_LABEL[dest]}`,
-                value: `${fmt(result.mirrorCost)}/mo`,
-                strike: true,
-              },
-              {
-                label: "With size corrected before migrating",
-                value: `${fmt(result.rightCost)}/mo`,
-                strike: false,
-              },
-              {
-                label: `Instance a mirrored migration would require`,
-                value: result.mirrored.name,
-                strike: false,
-              },
-            ].map((row, i) => (
+          {!DEST_ENGINES[dest].includes(db) ? (
+            <div style={{ padding: "26px 24px" }}>
               <div
-                key={row.label}
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "baseline",
-                  padding: "13px 0",
-                  borderBottom: i < 2 ? `1px solid ${SAGE}` : "none",
-                  gap: 12,
-                  flexWrap: "wrap",
+                  ...EXPANDED,
+                  fontSize: "clamp(18px,2vw,24px)",
+                  letterSpacing: "-0.5px",
+                  color: INK,
+                  lineHeight: 1.15,
+                  marginBottom: 8,
                 }}
               >
-                <span style={{ ...REGULAR, fontSize: 13, color: MUTED_GREEN, flex: "1 1 140px" }}>
-                  {row.label}
-                </span>
-                <span
-                  style={{
-                    ...SEMIBOLD,
-                    fontSize: 14,
-                    color: row.strike ? MUTED_GREEN : INK,
-                    textDecoration: row.strike ? "line-through" : "none",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {row.value}
-                </span>
+                {DEST_LABEL[dest]} has no managed {db}.
               </div>
-            ))}
-          </div>
-
-          <div
-            style={{
-              background: "#edf0ea",
-              borderTop: `2px solid ${INK}`,
-              padding: "18px 24px 20px",
-              marginTop: "auto",
-            }}
-          >
-            <div
-              style={{
-                ...EXPANDED,
-                fontSize: "clamp(22px,2.6vw,32px)",
-                letterSpacing: "-0.9px",
-                color: "#2e7d5b",
-                lineHeight: 1,
-              }}
-            >
-              {result.savings > 0 ? `${fmt(result.savings)} per year` : "Sizing is already optimal"}
-            </div>
-            <p
-              style={{
-                ...REGULAR,
-                fontSize: 12.5,
-                color: MUTED_GREEN,
-                margin: "8px 0 0",
-                lineHeight: 1.6,
-              }}
-            >
-              {result.savings > 0
-                ? `Saved on this single instance by migrating at the right size. Storage: ${fmt(result.storageCost)}/mo included.`
-                : "The observed load fits the current provisioning. No savings from rightsizing before migration."}
-            </p>
-            {freeEngine && (
               <p
                 style={{
                   ...REGULAR,
-                  fontSize: 11.5,
-                  color: ACCENT_MID,
-                  margin: "10px 0 0",
-                  lineHeight: 1.5,
+                  fontSize: 14.5,
+                  lineHeight: 1.6,
+                  color: MUTED_GREEN,
+                  margin: 0,
                 }}
               >
-                {db}: no license cost — prices shown are the total instance cost.
+                There is no managed service to price. {db} runs there on compute instances you
+                administer yourself, under your own licence — a different operating model, not a
+                cheaper one. Pick another destination to compare.
               </p>
-            )}
-          </div>
+            </div>
+          ) : (
+            <>
+              <div style={{ padding: "22px 24px 18px", borderBottom: `2px solid ${INK}` }}>
+                <span style={{ ...REGULAR, fontSize: 12, color: MUTED_GREEN }}>
+                  Recommended instance after rightsizing
+                </span>
+                <div
+                  style={{
+                    ...EXPANDED,
+                    fontSize: "clamp(20px,2.4vw,30px)",
+                    letterSpacing: "-0.7px",
+                    color: INK,
+                    lineHeight: 1.1,
+                    marginTop: 6,
+                  }}
+                >
+                  {result.rightSized.name}
+                </div>
+                <span
+                  style={{
+                    ...REGULAR,
+                    fontSize: 12.5,
+                    color: MUTED_GREEN,
+                    marginTop: 4,
+                    display: "block",
+                  }}
+                >
+                  {result.rightSized.vcpu} vCPU · {result.rightSized.memGb} GB · {storageGb} GB{" "}
+                  {DEST_STORAGE_LABEL[dest]}
+                </span>
+              </div>
+
+              <div style={{ padding: "4px 24px 0" }}>
+                {[
+                  {
+                    label:
+                      dest === "aws"
+                        ? "Mirrored migration, as it stands today"
+                        : `Mirrored migration to ${DEST_LABEL[dest]}`,
+                    value: `${fmt(result.mirrorCost)}/mo`,
+                    strike: true,
+                  },
+                  {
+                    label: "With size corrected before migrating",
+                    value: `${fmt(result.rightCost)}/mo`,
+                    strike: false,
+                  },
+                  {
+                    label: `Instance a mirrored migration would require`,
+                    value: result.mirrored.name,
+                    strike: false,
+                  },
+                ].map((row, i) => (
+                  <div
+                    key={row.label}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "baseline",
+                      padding: "13px 0",
+                      borderBottom: i < 2 ? `1px solid ${SAGE}` : "none",
+                      gap: 12,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <span
+                      style={{ ...REGULAR, fontSize: 13, color: MUTED_GREEN, flex: "1 1 140px" }}
+                    >
+                      {row.label}
+                    </span>
+                    <span
+                      style={{
+                        ...SEMIBOLD,
+                        fontSize: 14,
+                        color: row.strike ? MUTED_GREEN : INK,
+                        textDecoration: row.strike ? "line-through" : "none",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {row.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div
+                style={{
+                  background: "#edf0ea",
+                  borderTop: `2px solid ${INK}`,
+                  padding: "18px 24px 20px",
+                  marginTop: "auto",
+                }}
+              >
+                <div
+                  style={{
+                    ...EXPANDED,
+                    fontSize: "clamp(22px,2.6vw,32px)",
+                    letterSpacing: "-0.9px",
+                    color: "#2e7d5b",
+                    lineHeight: 1,
+                  }}
+                >
+                  {result.savings > 0
+                    ? `${fmt(result.savings)} per year`
+                    : "Sizing is already optimal"}
+                </div>
+                <p
+                  style={{
+                    ...REGULAR,
+                    fontSize: 12.5,
+                    color: MUTED_GREEN,
+                    margin: "8px 0 0",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {result.savings > 0
+                    ? `Saved on this single instance by migrating at the right size. Storage: ${fmt(result.storageCost)}/mo included.`
+                    : "The observed load fits the current provisioning. No savings from rightsizing before migration."}
+                </p>
+                {freeEngine && (
+                  <p
+                    style={{
+                      ...REGULAR,
+                      fontSize: 11.5,
+                      color: ACCENT_MID,
+                      margin: "10px 0 0",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {db}: no license cost — prices shown are the total instance cost.
+                  </p>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>
