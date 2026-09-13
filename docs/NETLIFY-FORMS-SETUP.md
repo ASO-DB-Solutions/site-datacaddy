@@ -109,6 +109,10 @@ Save. That is the whole change.
 
 Go to [datacaddy.co](https://datacaddy.co), fill the form in properly, and submit.
 
+**The send button stays dimmed until name, email and company are filled and the address looks
+valid.** That is the form working, not a fault — a line under the button says what is still
+missing. Message is optional.
+
 **Take more than three seconds over it.** The form silently discards submissions completed faster
 than a person plausibly could — a deliberate anti-bot measure — and it shows the same success
 message either way, so a rushed test looks like it worked while going nowhere.

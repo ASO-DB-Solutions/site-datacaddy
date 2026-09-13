@@ -67,6 +67,30 @@ a build failure rather than a blank on the page.
 was both the button text and the branch condition selecting a cloud provider's instance table —
 translating the label would have silently switched providers.
 
+### A control that cannot act is dimmed, not disabled (adopted 2026-09-13)
+
+`aria-disabled` with reduced opacity, not the `disabled` attribute, whenever a control is inert
+because of something the visitor can change.
+
+```tsx
+<button aria-disabled={!complete} onClick={…}>   // dimmed, reachable, explains itself
+<button disabled={!complete}>                     // WRONG — leaves the tab order silently
+```
+
+A `disabled` button is removed from the tab order, so a keyboard or screen-reader user meets a
+control they cannot reach and is told nothing about why. The dimmed form stays reachable, and
+activating it is what surfaces the reason — the submit handler marks every outstanding field and
+focuses the first; a dimmed destination button opens the card explaining what that cloud offers
+instead. "Why is that one grey?" is the question worth answering, and the dead end is the worse
+interface.
+
+`disabled` is still correct for a control that is inert because of something in flight — a form
+mid-submit, where blocking a second click is the whole point.
+
+**One source per attribute when a spread is involved.** `title` was being set twice on the same
+element, once directly and once by a review mark, and the later spread won silently. `tsc --noEmit`
+catches this (TS2783); `vite build` does not.
+
 ### Showing work that cannot ship (adopted 2026-09-12)
 
 Work that is finished but blocked on somebody else is rendered in a **review build**, outlined and
