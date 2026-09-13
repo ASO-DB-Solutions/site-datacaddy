@@ -26,6 +26,7 @@ export const ptBR = {
     required_mark: "obrigatório",
 
     submit: "Solicitar o assessment",
+    completeHint: "Preencha nome, e-mail e empresa para enviar.",
     sending: "Enviando…",
     successTitle: "Recebemos sua mensagem.",
     successBody:

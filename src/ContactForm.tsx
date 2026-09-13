@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useCopy } from "@/CopyProvider";
+import type { Copy } from "@/i18n";
 import { ACCENT, CREAM, EXPANDED, MUTED_GREEN, REGULAR, SEMIBOLD, TEXT_LIGHT } from "@/tokens";
 
 /**
@@ -26,7 +27,22 @@ const MIN_FILL_MS = 3000;
 type Status = "idle" | "sending" | "sent" | "error";
 type Field = "name" | "email" | "company" | "message";
 
+/** Deliberately permissive. A stricter pattern rejects addresses that are
+ *  valid — plus-tags, new TLDs, unicode locals — and the only authority on
+ *  whether an address works is whether mail to it arrives. This catches the
+ *  typo class (no @, no dot, trailing space) and nothing else. */
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const REQUIRED = ["name", "email", "company"] as const;
+
+/** The single definition of "may this be submitted". The button's enabled
+ *  state and the submit handler both read it, so they cannot drift. */
+function validate(values: Record<Field, string>, c: Copy["contact"]) {
+  const errors: Partial<Record<Field, string>> = {};
+  for (const f of REQUIRED) if (!values[f].trim()) errors[f] = c.required;
+  if (values.email.trim() && !EMAIL.test(values.email.trim())) errors.email = c.invalidEmail;
+  return errors;
+}
 
 export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
   const c = useCopy().contact;
@@ -36,7 +52,7 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
     company: "",
     message: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
+  const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [status, setStatus] = useState<Status>("idle");
   const mountedAt = useRef(Date.now());
   const honeypot = useRef<HTMLInputElement>(null);
@@ -46,22 +62,31 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
     mountedAt.current = Date.now();
   }, []);
 
-  const set = (f: Field) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const problems = validate(values, c);
+  const complete = Object.keys(problems).length === 0;
+
+  const set = (f: Field) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setValues((v) => ({ ...v, [f]: e.target.value }));
-    setErrors((x) => (x[f] ? { ...x, [f]: undefined } : x));
-  };
+
+  const blur = (f: Field) => () => setTouched((t) => ({ ...t, [f]: true }));
+
+  /** An error is shown once the field has been left, or once a submit has been
+   *  attempted — never while someone is still mid-word. */
+  const shown = (f: Field) => (touched[f] ? problems[f] : undefined);
 
   const submit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      const next: Partial<Record<Field, string>> = {};
-      if (!values.name.trim()) next.name = c.required;
-      if (!values.company.trim()) next.company = c.required;
-      if (!values.email.trim()) next.email = c.required;
-      else if (!EMAIL.test(values.email.trim())) next.email = c.invalidEmail;
-      setErrors(next);
-      if (Object.keys(next).length) return;
+      const next = validate(values, c);
+      if (Object.keys(next).length) {
+        // The button is already disabled in this state, but a keyboard user can
+        // still reach it and the form can still be submitted with Enter. Show
+        // every outstanding problem and put the cursor on the first.
+        setTouched(Object.fromEntries(REQUIRED.map((f) => [f, true])));
+        document.getElementById(`dc-${Object.keys(next)[0]}`)?.focus();
+        return;
+      }
 
       // Silently accept and discard obvious bots: a filled honeypot, or a
       // submission faster than a person could have typed one.
@@ -159,8 +184,9 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
           type="text"
           autoComplete="name"
           value={values.name}
-          error={errors.name}
+          error={shown("name")}
           onChange={set("name")}
+          onBlur={blur("name")}
         />
         <TextField
           field="email"
@@ -168,8 +194,9 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
           type="email"
           autoComplete="email"
           value={values.email}
-          error={errors.email}
+          error={shown("email")}
           onChange={set("email")}
+          onBlur={blur("email")}
         />
       </div>
 
@@ -179,8 +206,9 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
         type="text"
         autoComplete="organization"
         value={values.company}
-        error={errors.company}
+        error={shown("company")}
         onChange={set("company")}
+        onBlur={blur("company")}
       />
 
       <div>
@@ -217,6 +245,11 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
       <button
         type="submit"
         disabled={status === "sending"}
+        // aria-disabled rather than `disabled` while the form is incomplete. A
+        // truly disabled button leaves the tab order, so a keyboard or screen
+        // reader user meets a control they cannot reach and is told nothing.
+        // This looks disabled, stays reachable, and submitting reveals why.
+        aria-disabled={!complete}
         style={{
           ...SEMIBOLD,
           fontSize: 15,
@@ -225,13 +258,27 @@ export function ContactForm({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
           border: `1px solid ${MUTED_GREEN}`,
           borderRadius: 2,
           padding: "14px 28px",
-          cursor: status === "sending" ? "default" : "pointer",
-          opacity: status === "sending" ? 0.7 : 1,
+          cursor: !complete || status === "sending" ? "default" : "pointer",
+          opacity: !complete || status === "sending" ? 0.45 : 1,
+          transition: "opacity 0.15s",
           justifySelf: "start",
         }}
       >
         {status === "sending" ? c.sending : c.submit}
       </button>
+
+      {!complete && (
+        <p
+          style={{
+            ...REGULAR,
+            fontSize: 13,
+            color: "rgba(199,208,197,0.5)",
+            margin: "-6px 0 0",
+          }}
+        >
+          {c.completeHint}
+        </p>
+      )}
 
       <div ref={liveRegion} role="alert">
         {status === "error" && (
@@ -257,6 +304,7 @@ function TextField({
   value,
   error,
   onChange,
+  onBlur,
 }: {
   field: string;
   label: string;
@@ -265,6 +313,7 @@ function TextField({
   value: string;
   error?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: () => void;
 }) {
   return (
     <div>
@@ -283,6 +332,7 @@ function TextField({
         autoComplete={autoComplete}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `dc-${field}-err` : undefined}
       />

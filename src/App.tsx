@@ -218,6 +218,10 @@ function ResponsiveStyles() {
       .dc-calc-label { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 12px; color: rgba(199,208,197,0.55); letter-spacing: 0.04em; text-transform: uppercase; display: block; margin-bottom: 6px; }
       .dc-dest-btn { flex: 1; padding: 11px 16px; border-radius: 2px; cursor: pointer; font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-weight: 600; font-size: 14px; transition: all 0.15s; border: 1px solid rgba(199,208,197,0.3); background: transparent; color: ${TEXT_LIGHT}; }
       .dc-dest-btn.active { background: ${CREAM}; color: ${INK}; border-color: ${CREAM}; }
+      /* Dimmed, not removed: a destination that cannot host the chosen engine
+         stays clickable, and selecting it is what surfaces the explanation. */
+      .dc-dest-btn[aria-disabled="true"] { opacity: 0.4; cursor: default; }
+      .dc-dest-btn[aria-disabled="true"]:not(.active):hover { border-color: rgba(199,208,197,0.3); }
 
       .dc-cta-btns { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
       /* The form is the page's one conversion goal, so it is the one element
@@ -1341,23 +1345,33 @@ function MigrationSection() {
             <div>
               <label className="dc-calc-label">Destination</label>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                {DESTINATIONS.map((d) => (
-                  <button
-                    key={d}
-                    className={`dc-dest-btn${dest === d ? " active" : ""}`}
-                    style={
-                      REVIEW && (d === "oci" || d === "gcp")
-                        ? reviewMark(REVIEW_ITEMS[0].why)
-                        : undefined
-                    }
-                    {...(REVIEW && (d === "oci" || d === "gcp")
-                      ? reviewProps(REVIEW_ITEMS[0].why)
-                      : {})}
-                    onClick={() => setDest(d)}
-                  >
-                    {d}
-                  </button>
-                ))}
+                {DESTINATIONS.map((d) => {
+                  // Dimmed rather than `disabled`. A disabled button leaves the
+                  // tab order and explains nothing, and "why is this one grey?"
+                  // is the question worth answering: clicking it selects the
+                  // destination and the result card states that the managed
+                  // product does not exist. The dead end would be the worse UI.
+                  const offered = DEST_ENGINES[d].includes(db);
+                  const marked = REVIEW && (d === "oci" || d === "gcp");
+                  return (
+                    <button
+                      key={d}
+                      className={`dc-dest-btn${dest === d ? " active" : ""}`}
+                      aria-disabled={!offered}
+                      style={marked ? reviewMark(REVIEW_ITEMS[0].why) : undefined}
+                      // One source for `title`, because a review mark sets it too
+                      // and a later spread would silently overwrite an earlier one.
+                      {...(marked
+                        ? reviewProps(REVIEW_ITEMS[0].why)
+                        : offered
+                          ? {}
+                          : { title: `${DEST_LABEL[d]} has no managed ${db}` })}
+                      onClick={() => setDest(d)}
+                    >
+                      {d}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
