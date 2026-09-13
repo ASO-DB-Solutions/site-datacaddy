@@ -25,6 +25,7 @@ export const en = {
     required_mark: "required",
 
     submit: "Request the assessment",
+    completeHint: "Fill in name, email and company to send.",
     sending: "Sending…",
     successTitle: "We got your message.",
     successBody:
