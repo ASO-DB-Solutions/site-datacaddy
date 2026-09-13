@@ -17,17 +17,19 @@ export const ptBR = {
     blurb:
       "Um assessment de cortesia em até cinco instâncias: workload, configuração, segurança e o dimensionamento que elas deveriam ter. Sem instalar nada.",
 
-    name: "Nome",
-    email: "E-mail corporativo",
-    company: "Empresa",
-    message: "O que você quer que a gente leia?",
+    name: "Nome completo",
+    email: "E-mail",
+    company: "Nome da empresa",
+    message: "Objetivos do assessment",
     messagePlaceholder: "Quais bancos, quantas instâncias mais ou menos, algo específico.",
     optional: "opcional",
+    required_mark: "obrigatório",
 
     submit: "Solicitar o assessment",
     sending: "Enviando…",
-    successTitle: "Recebido.",
-    successBody: "Respondemos de info@datacaddy.co em até um dia útil.",
+    successTitle: "Recebemos sua mensagem.",
+    successBody:
+      "Alguém da equipe DataCaddy entra em contato em breve para agendar seu assessment.",
     errorTitle: "O envio não foi concluído.",
     errorBody: "Tente de novo, ou escreva direto para info@datacaddy.co.",
 

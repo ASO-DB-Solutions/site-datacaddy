@@ -16,17 +16,19 @@ export const en = {
     blurb:
       "A complimentary assessment on up to five instances: workload, configuration, security and the right size for each one. No installation required.",
 
-    name: "Name",
-    email: "Work email",
-    company: "Company",
-    message: "What would you like read?",
+    name: "Full name",
+    email: "Email",
+    company: "Company name",
+    message: "Assessment objectives",
     messagePlaceholder: "Which engines, roughly how many instances, anything specific.",
     optional: "optional",
+    required_mark: "required",
 
     submit: "Request the assessment",
     sending: "Sending…",
-    successTitle: "Received.",
-    successBody: "We'll reply from info@datacaddy.co within one business day.",
+    successTitle: "We got your message.",
+    successBody:
+      "Someone from the DataCaddy team will be in touch shortly to schedule your assessment.",
     errorTitle: "That didn't send.",
     errorBody: "Try again, or email us directly at info@datacaddy.co.",
 
