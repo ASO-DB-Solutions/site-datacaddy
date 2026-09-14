@@ -3,10 +3,8 @@ import imgHeroTexture from "@/assets/hero-texture.webp";
 import imgGolfBallDome from "@/assets/golf-dome.webp";
 import imgGolfCourse from "@/assets/cta-golf-course.webp";
 import { ContactForm } from "@/ContactForm";
-import { useLocale } from "@/CopyProvider";
 import { REVIEW, REVIEW_ITEMS, ReviewLegend, reviewMark, reviewProps } from "@/review";
 import { PrivacyModal } from "@/PrivacyModal";
-import { signInUrlForLocale } from "@/signIn";
 import {
   EXPANDED,
   REGULAR,
@@ -292,8 +290,6 @@ const NAV_LINKS: { label: string; href: string }[] = [
 
 function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
   const [scrolled, setScrolled] = useState(false);
-  // The app defaults to Portuguese, so the language travels with the link.
-  const signIn = signInUrlForLocale(useLocale());
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -372,7 +368,7 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
             </a>
           ))}
           <a
-            href={signIn}
+            href="https://app.datacaddy.co/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -420,7 +416,6 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
 }
 
 function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const signIn = signInUrlForLocale(useLocale());
   return (
     <>
       <div className={`dc-drawer-overlay${open ? " open" : ""}`} onClick={onClose} />
@@ -479,7 +474,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           Get an assessment
         </a>
         <a
-          href={signIn}
+          href="https://app.datacaddy.co/"
           target="_blank"
           rel="noopener noreferrer"
           className="dc-drawer-link"
