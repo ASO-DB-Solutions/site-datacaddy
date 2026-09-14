@@ -169,6 +169,7 @@ Expected: `200`, `ssl_verify_result` of `0`, three header lines present, `lang="
 
 - [`ADR-0003`](adr/0003-netlify-hosts-the-site-with-netlify-forms-for-contact.md) records *why* Netlify Free, and why not GitHub Pages, Vercel Hobby, or Azure Static Web Apps.
 - [`ADR-0002`](adr/0002-each-language-gets-its-own-url.md) explains the two-shell `/` and `/pt-br/` layout this deployment serves.
+- [`DEPLOYS.md`](DEPLOYS.md) is the daily counterpart to this one-time procedure: how a change reaches the live site afterwards, and how to tell whether it did. Netlify reports nothing back to the repository, so that has to be checked by hand.
 - `.github/workflows/ci.yml` only *gates* pull requests. It does not deploy — Netlify builds independently, so the organisation's allowed-actions policy never sits in the deploy path.
 - The sibling project's [`CICD-PIPELINE-SETUP.md`](https://github.com/ASO-DB-Solutions/integration-bot/blob/master/docs/CICD-PIPELINE-SETUP.md) describes a very different arrangement — a self-hosted runner deploying to an OCI VM. Nothing here resembles it, and deliberately so: this site has no secrets and no backend.
 
