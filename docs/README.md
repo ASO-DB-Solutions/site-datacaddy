@@ -3,6 +3,7 @@
 | Document | What it covers |
 |---|---|
 | [`NETLIFY-SETUP.md`](NETLIFY-SETUP.md) · [pt-BR](NETLIFY-SETUP.pt-BR.md) | Standing the site up on Netlify and pointing `datacaddy.co` at it. The DNS half is a parameter table, not instructions — the zone is administered by someone who needs values, not a procedure. |
+| [`DEPLOYS.md`](DEPLOYS.md) · [pt-BR](DEPLOYS.pt-BR.md) | How a change reaches the live site, how to prove it got there, and what to do when it does not. Merging is not shipping, and nothing in the repository reports the difference. |
 | [`PUBLIC-SURFACE.md`](PUBLIC-SURFACE.md) · [pt-BR](PUBLIC-SURFACE.pt-BR.md) | What a public site and a public repository expose, what stays private, and the six rules that came out of auditing it. |
 | [`MICROSOFT-EMAIL-SETUP.md`](MICROSOFT-EMAIL-SETUP.md) · [pt-BR](MICROSOFT-EMAIL-SETUP.pt-BR.md) | Finishing `info@datacaddy.co`: DKIM, DMARC and the mailbox. The domain is already verified in the tenant; these are the three pieces still missing. |
 | [`NETLIFY-FORMS-SETUP.md`](NETLIFY-FORMS-SETUP.md) · [pt-BR](NETLIFY-FORMS-SETUP.pt-BR.md) | Turning on the contact form's email notifications. The form is live and capturing; nobody is being told yet. |
