@@ -1,6 +1,4 @@
-# The site is live but not launched. This block is deliberate and is lifted in
-# its own commit at launch; see docs/devlog for the day it changes.
 User-agent: *
-Disallow: /
+Allow: /
 
 Sitemap: https://datacaddy.co/sitemap.xml
