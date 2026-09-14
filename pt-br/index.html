@@ -8,9 +8,12 @@
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="canonical" href="https://datacaddy.co/pt-br/" />
-    <link rel="alternate" hreflang="en" href="https://datacaddy.co/" />
-    <link rel="alternate" hreflang="pt-BR" href="https://datacaddy.co/pt-br/" />
-    <link rel="alternate" hreflang="x-default" href="https://datacaddy.co/" />
+    <!-- This page is for people who are given the link, not for search results:
+         DataCaddy sells into the United States. `noindex` keeps it out of the
+         index; `follow` keeps the links it contains meaningful. It must stay
+         CRAWLABLE for this to be read at all, which is why robots.txt says
+         Allow — a Disallow would hide this instruction, not enforce it. -->
+    <meta name="robots" content="noindex, follow" />
     <!-- title / description / og:* injected by siteMeta() -->
   </head>
   <body>

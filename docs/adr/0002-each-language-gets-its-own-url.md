@@ -62,3 +62,36 @@ transcreated. `CONTEXT.md` fixes the vocabulary.
 - **`tsc` cannot catch a Portuguese value that is still the English string.** A separate
   `check:i18n` gate is needed for that, asserting no empty values and no pt-BR value identical to
   its English counterpart outside an allowlist of proper nouns.
+
+## Addendum (2026-09-14): only English is offered to search engines
+
+The decision holds — each language keeps its own URL, built from one bundle — but one consequence
+above is now wrong. This ADR assumed both locales would be indexed and left open only *which* one
+owned `/`. The owner's call is that **`/pt-br/` is not for search results at all**: DataCaddy sells
+into the United States, and the Portuguese page exists so the designer, the owner and Brazilian
+stakeholders can read the site in its original language. It stays built, deployed and reachable to
+anyone with the link.
+
+What changed, one day after indexing was enabled:
+
+- `pt-br/index.html` carries `<meta name="robots" content="noindex, follow">`.
+- `public/sitemap.xml` submits only `https://datacaddy.co/`.
+- **The `hreflang` set is gone from both shells.** It exists to relate indexable translations of
+  one page. With one locale indexed, a single-entry set says nothing, and a set naming a `noindex`
+  page contradicts itself.
+
+**`robots.txt` stays `Allow: /`, and that is load-bearing.** The obvious move — `Disallow: /pt-br/`
+— would have been wrong three times over, and the third is the trap: `Disallow` stops a crawler
+*fetching* the page, so it would never read the `noindex` that does the actual work. Blocking and
+de-indexing are different jobs, and combining them leaves the page crawlable-but-unreadable in the
+worst sense. Two further reasons it was rejected: `Disallow` does not remove a URL from the index
+(a blocked page can still be listed, bare, from external links), and `robots.txt` is itself public,
+so naming a path there advertises it to anyone curious.
+
+**Which locale owns `/` is no longer open.** English owns it, because it is the only one indexed.
+Reversing that is no longer "one constant" — it would mean moving the `noindex` and rebuilding the
+sitemap, which is the cost of having answered the question.
+
+**The documentation still describes two locales, correctly.** `CONTEXT.md`, `AGENTS.md` and the
+setup runbooks were left alone: the site really is built bilingually from two shells, and that has
+not changed. What changed is only what the site tells search engines.
