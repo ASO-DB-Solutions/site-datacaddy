@@ -202,6 +202,10 @@ that mail, not Microsoft. See [`NETLIFY-FORMS-SETUP.md`](NETLIFY-FORMS-SETUP.md)
   additional to those and do not conflict — mail and web records coexist in the same zone.
 - [`PUBLIC-SURFACE.md`](PUBLIC-SURFACE.md) notes that publishing mail records announces which
   provider the company uses. That is normal and unavoidable.
+- [`GRAPH-MAIL-SETUP.md`](GRAPH-MAIL-SETUP.md) is the successor: once this domain signs with DKIM,
+  it covers `app.datacaddy.co` sending account mail as `access@datacaddy.co` through Graph. It
+  **depends on steps 1 and 3 here** — application mail from an unsigned domain lands in spam — and
+  it uses `info@datacaddy.co` as its `Reply-To`.
 
 ---
 
