@@ -208,6 +208,10 @@ envia esse e-mail é a Netlify, não a Microsoft. Ver
   zona.
 - O [`PUBLIC-SURFACE.pt-BR.md`](PUBLIC-SURFACE.pt-BR.md) observa que publicar registros de e-mail
   anuncia qual provedor a empresa usa. Isso é normal e inevitável.
+- O [`GRAPH-MAIL-SETUP.pt-BR.md`](GRAPH-MAIL-SETUP.pt-BR.md) é o sucessor: depois que este domínio
+  assinar com DKIM, ele cobre o `app.datacaddy.co` enviando e-mail de conta como
+  `access@datacaddy.co` pelo Graph. Ele **depende dos passos 1 e 3 daqui** — e-mail de aplicação
+  saindo de domínio sem assinatura cai em spam — e usa o `info@datacaddy.co` como `Reply-To`.
 
 ---
 

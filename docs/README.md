@@ -6,6 +6,7 @@
 | [`DEPLOYS.md`](DEPLOYS.md) · [pt-BR](DEPLOYS.pt-BR.md) | How a change reaches the live site, how to prove it got there, and what to do when it does not. Merging is not shipping, and nothing in the repository reports the difference. |
 | [`PUBLIC-SURFACE.md`](PUBLIC-SURFACE.md) · [pt-BR](PUBLIC-SURFACE.pt-BR.md) | What a public site and a public repository expose, what stays private, and the six rules that came out of auditing it. |
 | [`MICROSOFT-EMAIL-SETUP.md`](MICROSOFT-EMAIL-SETUP.md) · [pt-BR](MICROSOFT-EMAIL-SETUP.pt-BR.md) | Finishing `info@datacaddy.co`: DKIM, DMARC and the mailbox. The domain is already verified in the tenant; these are the three pieces still missing. |
+| [`GRAPH-MAIL-SETUP.md`](GRAPH-MAIL-SETUP.md) · [pt-BR](GRAPH-MAIL-SETUP.pt-BR.md) | Letting `app.datacaddy.co` send account mail as `access@datacaddy.co` through Graph: two app registrations, admin consent, the sender mailbox, and the access policy that stops the app sending as anyone else. Depends on `MICROSOFT-EMAIL-SETUP.md` being finished first. |
 | [`NETLIFY-FORMS-SETUP.md`](NETLIFY-FORMS-SETUP.md) · [pt-BR](NETLIFY-FORMS-SETUP.pt-BR.md) | Turning on the contact form's email notifications. The form is live and capturing; nobody is being told yet. |
 | [`assets.md`](assets.md) | Every third-party asset, its origin and its licence, plus the recipe that produced the optimised derivatives. |
 | [`devlog/`](devlog/README.md) | One dated report per day, for a non-technical reader. Generated from git, not from memory. |
